@@ -1,0 +1,6 @@
+{
+  "name": "Sovereign Motion",
+  "description": "Open-source Antigravity IDE skill workbench for Adobe Illustrator and After Effects code-driven financial motion graphics, local Kokoro-82M audio-synced rendering, and viral YouTube clipping.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

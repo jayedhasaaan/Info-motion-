@@ -1,0 +1,74 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  :root {
+    --bg-canvas: #F7F9FC;
+    --bg-surface: #FFFFFF;
+    --bg-subtle: #EEF2F7;
+    --border-hairline: #DCE3EE;
+    --ink-primary: #0F172A;
+    --ink-secondary: #526075;
+    --accent-amber: #D97706;
+    --accent-emerald: #059669;
+    --accent-crimson: #DC2626;
+  }
+
+  .dark {
+    --bg-canvas: #0B0F17;
+    --bg-surface: #111722;
+    --bg-subtle: #182132;
+    --border-hairline: #222E42;
+    --ink-primary: #F8FAFC;
+    --ink-secondary: #8B9BB4;
+    --accent-amber: #F5B82E;
+    --accent-emerald: #2AD08E;
+    --accent-crimson: #F43F5E;
+  }
+
+  html {
+    font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+    scroll-behavior: smooth;
+  }
+
+  h1, h2, .font-editorial {
+    font-family: "Bricolage Grotesque", "Plus Jakarta Sans", sans-serif;
+    text-wrap: balance;
+    letter-spacing: -0.02em;
+  }
+
+  .font-mono-tabular {
+    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Precision cinema workstation scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(139, 155, 180, 0.28);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 155, 180, 0.5);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
