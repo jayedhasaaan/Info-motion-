@@ -544,7 +544,7 @@ export interface GigaQualityGateItem {
 }
 
 /**
- * 18-Point Giga Quality Gate enforced in both the Studio UI and the exported Antigravity Skill v6.0.
+ * 22-Point Giga Quality Gate enforced in both the Studio UI and the exported Antigravity Skill v7.0.
  */
 export const GIGA_QUALITY_CHECKLIST: GigaQualityGateItem[] = [
   {
@@ -575,7 +575,7 @@ export const GIGA_QUALITY_CHECKLIST: GigaQualityGateItem[] = [
     id: 'qg-05',
     category: 'Visual Craft',
     defectTargeted: 'Bubble-outlined cartoon text, dark TikTok subtitle boxes, or corner HUD clutter',
-    nonNegotiableStandard: 'Clean Barlow Condensed broadcast headlines + animated `LeaderCallout` pointers in open negative space, soft-scrim broadcast captions (zero pill box, zero thick cartoon stroke), and zero permanent HUD timers.',
+    nonNegotiableStandard: 'Clean Barlow Condensed broadcast headlines + animated `GlassLeaderCallout` pointers in open negative space, soft-scrim broadcast captions (zero pill box, zero thick cartoon stroke), and zero permanent HUD timers.',
   },
   {
     id: 'qg-06',
@@ -587,13 +587,13 @@ export const GIGA_QUALITY_CHECKLIST: GigaQualityGateItem[] = [
     id: 'qg-07',
     category: 'Motion & Transitions',
     defectTargeted: 'Jarring hard cuts, linear slides, or tacky 3D card flips',
-    nonNegotiableStandard: '100% AE Graph Editor Bezier transitions (`proZoomThrough`, `proWhipPan`, `proIrisReveal`, `proDiagonalSweep`, `proShutterWipe`, `proLiquidWaveSweep`) with anticipation pull-back and optical rings.',
+    nonNegotiableStandard: '100% AE Graph Editor Bezier transitions (`proZoomThrough`, `proWhipPan`, `proIrisReveal`, `proDiagonalSweep`, `proShutterWipe`, `proLiquidWaveSweep`, `proCloudFlythroughTransition`, `proMatchCutMorph`) with anticipation pull-back and optical rings.',
   },
   {
     id: 'qg-08',
     category: 'Motion & Transitions',
     defectTargeted: 'Sub-pixel white edge seams or gray opacity dips during transitions',
-    nonNegotiableStandard: '0.6% overscan + speed streaks on whip pans, coupled camera scale + optical bloom on zoom-throughs, inked aperture ring on iris reveals, and vertical/horizontal blade edges on shutter wipes.',
+    nonNegotiableStandard: '0.6% overscan + velocity smear streaks on whip pans, coupled camera scale + optical bloom on zoom-throughs, inked aperture ring on iris reveals, and vertical/horizontal blade edges on shutter wipes.',
   },
   {
     id: 'qg-09',
@@ -641,19 +641,43 @@ export const GIGA_QUALITY_CHECKLIST: GigaQualityGateItem[] = [
     id: 'qg-16',
     category: 'Motion & Transitions',
     defectTargeted: 'Hero slams, stamps, and payoff reveals feeling weightless without graphic punch',
-    nonNegotiableStandard: 'Fire crisp 8-spoke inked `ImpactBurst` radial pop-lines on hero callouts, rubber-stamp slams, vault reveals, and financial payoffs.',
+    nonNegotiableStandard: 'Fire crisp 12-spoke `ImpactBurst` radial pop-lines on hero callouts, rubber-stamp slams, vault reveals, and financial payoffs.',
   },
   {
     id: 'qg-17',
     category: 'Visual Craft',
     defectTargeted: 'Viewers losing chapter orientation or scanning flat monotone captions',
-    nonNegotiableStandard: 'Slide a brief 2.25s top-left `ChapterSliver` broadcast ribbon in & cleanly away on beat entry, and highlight semantic power words (currency/numbers/nouns) in luminous emerald `#2AD08E` inside borderless outlined captions.',
+    nonNegotiableStandard: 'Slide a brief 2.25s top-left `ChapterSliver` broadcast ribbon in & cleanly away on beat entry, and highlight semantic power words (currency/numbers/nouns) in luminous emerald `#2AD08E` inside borderless captions.',
   },
   {
     id: 'qg-18',
     category: 'Audio & Pipeline',
     defectTargeted: 'Dry voice-only soundtrack with awkward silent pauses and unaccented visual hits',
-    nonNegotiableStandard: 'Mix a 5-layer pro-editor stereo SFX bed (transition whooshes + chimes, beat prop pops, rubber-stamp slam thuds, cash/summit harmonic shimmers, and a -34dB warm studio air bed) cleanly beneath crystal-clear foreground narration.',
+    nonNegotiableStandard: 'Mix a 6-layer pro-editor stereo SFX bed (transition whooshes + chimes, beat prop pops, rubber-stamp slam thuds, cash/summit shimmers, -34dB warm studio air bed, and word-cue anchored micro-impacts) cleanly beneath foreground narration.',
+  },
+  {
+    id: 'qg-19',
+    category: 'Audio & Pipeline',
+    defectTargeted: 'Captions drifting ahead of voiceover across silent gaps or visual hits missing spoken keywords',
+    nonNegotiableStandard: 'Audio-First Per-Beat Kokoro-82M + WhisperX Word Lock (`<= 16.7ms` / 1-frame A/V sync accuracy): synthesize audio per beat first, emit `timeline.locked.json` with exact `words[]` and `cueFrames{}`, and drive every visual hit & caption directly from spoken timestamps (zero linear spread across silence).',
+  },
+  {
+    id: 'qg-20',
+    category: 'Motion & Transitions',
+    defectTargeted: 'Flat 2D slides lacking After Effects Z-depth parallax or atmospheric scale',
+    nonNegotiableStandard: 'Wrap hero acts in `<Camera3DRig>` true CSS 3D perspective stages (`perspective: 1240px`, `preserve-3d`) and bridge macro-scale pivots with `<VolumetricCloudFlythrough>` & `proCloudFlythroughTransition` 7-layer parting cumulus banks.',
+  },
+  {
+    id: 'qg-21',
+    category: 'Motion & Transitions',
+    defectTargeted: 'Static mechanical cuts without velocity curve or directional motion blur energy',
+    nonNegotiableStandard: 'Use AE velocity-derivative speed ramps on `proWhipPan` (directional skew + smear streaks) and `proMatchCutMorph` (rotational shared-anchor handoff) for fluid viral documentary momentum.',
+  },
+  {
+    id: 'qg-22',
+    category: 'Visual Craft',
+    defectTargeted: 'Sterile flat digital vectors or heavy WebGL/SVG blur shaders crashing 16GB CPU laptops',
+    nonNegotiableStandard: 'Apply lightweight `<TactileDocumentaryCompositor>` (24fps stepped precomputed micro-film-grain + editorial corner halftones, zero heavy `feTurbulence`), `<GlassLeaderCallout>` telemetry cards, and mandatory `isSoftwareGl` WebGL fallback guard on Three.js 3D hero props.',
   },
 ];
 

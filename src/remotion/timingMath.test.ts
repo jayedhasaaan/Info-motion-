@@ -27,6 +27,6 @@ test('TransitionSeries timing locks every beat to exact 60fps voiceover boundary
   const expectedTotal = Math.round(BANGLADESH_X_BEATS[BANGLADESH_X_BEATS.length - 1].endSec * FILM_FPS);
   assert.equal(totalDurationInFrames, expectedTotal);
   assert.equal(cursor, expectedTotal);
-  // 155.85s * 60fps = 9351 frames
-  assert.equal(totalDurationInFrames, 9351);
+  // 155.80s exact WAV duration * 60fps = 9348 frames
+  assert.equal(totalDurationInFrames, 9348);
 });

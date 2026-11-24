@@ -4,6 +4,7 @@ import {
   INFOGRAPHICS_WORLD_PALETTES,
   type InfographicsWorldPalette,
 } from '../engine/infographicsStyleBible';
+import { getActiveWordState } from './wordSyncTimeline';
 
 export const FILM_FPS = 60;
 export const TRANSITION_FRAMES = 24; // Silky 0.40s AE Graph Editor smooth transition
@@ -33,7 +34,7 @@ export interface BeatTimingSpec {
   worldId: keyof typeof INFOGRAPHICS_WORLD_PALETTES;
 }
 
-// Locked directly to ffmpeg silencedetect pause boundaries in bangladesh-x-voiceover.wav (155.80s)
+// Locked directly to ffmpeg silencedetect pause midpoints in bangladesh-x-voiceover.wav (155.80s)
 export const BANGLADESH_X_BEATS: BeatTimingSpec[] = [
   {
     index: 0,
@@ -43,7 +44,7 @@ export const BANGLADESH_X_BEATS: BeatTimingSpec[] = [
     narration:
       'You are sitting at a quiet desk in Bangladesh, earning in Taka while paying global prices—yet one glowing window on your screen connects directly to New York, London, and San Francisco.',
     startSec: 0.0,
-    endSec: 12.15,
+    endSec: 12.17,
     polarity: 'dark',
     worldId: 'dhaka-twilight',
   },
@@ -54,8 +55,8 @@ export const BANGLADESH_X_BEATS: BeatTimingSpec[] = [
     headline: 'Leave the Crowded Pit for Open Skyline',
     narration:
       'On crowded freelance marketplaces, ten thousand bids race to the bottom for five dollars. On X, founders and decision-makers read directly in public—with zero gatekeepers between you and them.',
-    startSec: 12.15,
-    endSec: 25.85,
+    startSec: 12.17,
+    endSec: 25.88,
     polarity: 'light',
     worldId: 'industrial-danger',
   },
@@ -66,8 +67,8 @@ export const BANGLADESH_X_BEATS: BeatTimingSpec[] = [
     headline: 'Pennies vs Real Client Stacks',
     narration:
       'First, kill the illusion: waiting for X ad-revenue payouts from Bangladesh will earn you pennies. Real internet money on X comes from selling one sharp, undeniable skill directly to global clients.',
-    startSec: 25.85,
-    endSec: 40.0,
+    startSec: 25.88,
+    endSec: 40.04,
     polarity: 'light',
     worldId: 'studio-spotlight',
   },
@@ -78,8 +79,8 @@ export const BANGLADESH_X_BEATS: BeatTimingSpec[] = [
     headline: 'Four High-Value Global Skills',
     narration:
       'Start by mastering one concrete skill global companies happily pay for: short-form video editing, high-converting UI design, AI workflow automation, or sharp founder ghostwriting.',
-    startSec: 40.0,
-    endSec: 52.55,
+    startSec: 40.04,
+    endSec: 52.57,
     polarity: 'light',
     worldId: 'creative-workshop',
   },
@@ -90,8 +91,8 @@ export const BANGLADESH_X_BEATS: BeatTimingSpec[] = [
     headline: 'Not a Diary — A Corner Storefront',
     narration:
       'Your X profile is not a diary—it is a global storefront. Clear English positioning in your bio, one clean banner showing what you solve, and a pinned case study proving you deliver.',
-    startSec: 52.55,
-    endSec: 65.05,
+    startSec: 52.57,
+    endSec: 65.03,
     polarity: 'light',
     worldId: 'sunlit-street',
   },
@@ -102,8 +103,8 @@ export const BANGLADESH_X_BEATS: BeatTimingSpec[] = [
     headline: 'Thirty Days of Public Craft',
     narration:
       'Forget empty motivational quotes. For thirty days straight, post real teardowns, before-and-after redesigns, and thirty-second motion clips showing your craft working in real time.',
-    startSec: 65.05,
-    endSec: 76.95,
+    startSec: 65.03,
+    endSec: 76.94,
     polarity: 'light',
     worldId: 'studio-spotlight',
   },
@@ -114,8 +115,8 @@ export const BANGLADESH_X_BEATS: BeatTimingSpec[] = [
     headline: 'Fifty Replies Across the Ocean',
     narration:
       'With zero followers, nobody sees your posts yet. So spend forty minutes every evening leaving thoughtful, specific replies under fifty US and European startup founders who actively hire.',
-    startSec: 76.95,
-    endSec: 90.45,
+    startSec: 76.94,
+    endSec: 90.43,
     polarity: 'dark',
     worldId: 'coastal-dusk',
   },
@@ -126,8 +127,8 @@ export const BANGLADESH_X_BEATS: BeatTimingSpec[] = [
     headline: 'Send Proof That Unlocks the Vault',
     narration:
       'Never beg for work with "Sir, give me a job." Send a sixty-second custom sample fixing one real flaw on their landing page or video—and let your work open the conversation.',
-    startSec: 90.45,
-    endSec: 102.35,
+    startSec: 90.43,
+    endSec: 102.37,
     polarity: 'light',
     worldId: 'sunlit-street',
   },
@@ -138,8 +139,8 @@ export const BANGLADESH_X_BEATS: BeatTimingSpec[] = [
     headline: 'No PayPal Needed — Clean Bank Settlement',
     narration:
       'No PayPal in Bangladesh? No problem. Receive international USD retainers smoothly through Payoneer, Wise, or direct bank wire—and settle cleanly into your Bangladeshi bank account in BDT.',
-    startSec: 102.35,
-    endSec: 116.0,
+    startSec: 102.37,
+    endSec: 116.02,
     polarity: 'light',
     worldId: 'cargo-skyline',
   },
@@ -150,8 +151,8 @@ export const BANGLADESH_X_BEATS: BeatTimingSpec[] = [
     headline: 'Month 1: $0 · Month 2: $300 · Month 3: $1,500',
     narration:
       'Here is the honest ninety-day math: month one builds proof and zero dollars. Month two lands your first three-hundred-dollar test project. Month three stacks three steady clients into fifteen hundred dollars a month.',
-    startSec: 116.0,
-    endSec: 130.6,
+    startSec: 116.02,
+    endSec: 130.61,
     polarity: 'light',
     worldId: 'sunlit-street',
   },
@@ -162,7 +163,7 @@ export const BANGLADESH_X_BEATS: BeatTimingSpec[] = [
     headline: 'Two Focused Hours Every Single Night',
     narration:
       'Two hours every evening after university or work: forty minutes sharpening your craft, forty minutes replying to global builders, forty minutes shipping public proof. Repeat ninety times.',
-    startSec: 130.6,
+    startSec: 130.61,
     endSec: 141.9,
     polarity: 'dark',
     worldId: 'coastal-dusk',
@@ -175,7 +176,7 @@ export const BANGLADESH_X_BEATS: BeatTimingSpec[] = [
     narration:
       'The internet does not ask what passport you hold—it asks how reliably you solve expensive problems. Build in public on X, stay consistent for ninety days, and turn your desk in Bangladesh into a global studio.',
     startSec: 141.9,
-    endSec: 155.85,
+    endSec: 155.8,
     polarity: 'dark',
     worldId: 'padma-sunrise',
   },
@@ -809,37 +810,55 @@ const POWER_WORD_PATTERN =
   /^(\$[\d,.]+|taka|usd|bdt|x|bangladesh|ninety|thirty|fifty|five|three-hundred-dollar|fifteen|hundred|payoneer|wise|storefront|global|proof|real|zero)\b/i;
 
 /**
- * v6.0 Broadcast Documentary Captions:
- * Clean editorial cinema legibility — subtle dark bottom scrim + crisp drop-shadowed typography
- * (ZERO TikTok pill box, ZERO chunky cartoon black sticker outline!).
+ * v7.0 Audio-First Word-Locked Broadcast Captions:
+ * Locks each highlighted word directly to measured clause pause timestamps (0ms drift),
+ * with elastic spring pop on spoken word onset and zero TikTok pill-box clutter.
  */
 export const KineticSubtitleBar: React.FC<{
+  beatId?: string;
   narration: string;
   durationInFrames: number;
   enabled: boolean;
-}> = ({ narration, durationInFrames, enabled }) => {
+}> = ({ beatId, narration, durationInFrames, enabled }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
   if (!enabled) return null;
-  const words = narration.trim().split(/\s+/).filter(Boolean);
+
+  const lockedState = getActiveWordState(beatId, frame);
+  const words = lockedState
+    ? lockedState.words.map((w) => w.word)
+    : narration.trim().split(/\s+/).filter(Boolean);
+
   if (!words.length) return null;
 
-  const speechFrames = Math.max(30, durationInFrames * 0.93);
-  const progress = Math.max(0, Math.min(0.999, frame / speechFrames));
-  const activeIdx = Math.min(words.length - 1, Math.floor(progress * words.length));
+  let activeIdx = 0;
+  let localWordFrame = 0;
+  let isSpeaking = true;
+
+  if (lockedState) {
+    activeIdx = lockedState.activeIndex;
+    localWordFrame = lockedState.localWordFrame;
+    isSpeaking = lockedState.isSpeaking;
+  } else {
+    const speechFrames = Math.max(30, durationInFrames * 0.93);
+    const progress = Math.max(0, Math.min(0.999, frame / speechFrames));
+    activeIdx = Math.min(words.length - 1, Math.floor(progress * words.length));
+    const wordDuration = speechFrames / words.length;
+    localWordFrame = Math.max(0, frame - activeIdx * wordDuration);
+  }
 
   const groupSize = 6;
   const groupStart = Math.floor(activeIdx / groupSize) * groupSize;
   const chunk = words.slice(groupStart, groupStart + groupSize);
 
-  const wordDuration = speechFrames / words.length;
-  const localWordFrame = Math.max(0, frame - activeIdx * wordDuration);
-  const pop = spring({
-    frame: localWordFrame,
-    fps,
-    config: { damping: 16, stiffness: 310, mass: 0.42 },
-  });
+  const pop = isSpeaking
+    ? spring({
+        frame: localWordFrame,
+        fps,
+        config: { damping: 14.5, stiffness: 330, mass: 0.4 },
+      })
+    : 0;
 
   const broadcastShadow =
     '0 2px 10px rgba(4, 9, 18, 0.92), 0 1px 3px rgba(4, 9, 18, 0.98), 0 0 22px rgba(4, 9, 18, 0.55)';
@@ -874,8 +893,8 @@ export const KineticSubtitleBar: React.FC<{
       >
         {chunk.map((word, idx) => {
           const globalIdx = groupStart + idx;
-          const isCurrent = globalIdx === activeIdx;
-          const isSpoken = globalIdx < activeIdx;
+          const isCurrent = isSpeaking && globalIdx === activeIdx;
+          const isSpoken = globalIdx < activeIdx || (!isSpeaking && globalIdx === activeIdx && frame > 20);
           const cleanToken = word.replace(/^["'“”‘’]+|["'“”‘’,.:;!?—-]+$/g, '');
           const isPowerWord = POWER_WORD_PATTERN.test(cleanToken);
           const activeColor = isPowerWord ? '#2AD08E' : '#FFD166';
@@ -894,7 +913,7 @@ export const KineticSubtitleBar: React.FC<{
                     : 'rgba(255, 255, 255, 0.84)',
                 textShadow: broadcastShadow,
                 transform: isCurrent
-                  ? `scale(${(1 + pop * 0.08).toFixed(3)}) translateY(${(-pop * 2.2).toFixed(1)}px)`
+                  ? `scale(${(1 + pop * 0.1).toFixed(3)}) translateY(${(-pop * 2.6).toFixed(1)}px)`
                   : 'scale(1)',
                 display: 'inline-block',
               }}

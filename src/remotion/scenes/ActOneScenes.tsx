@@ -9,7 +9,6 @@ import {
   FONT_DISPLAY,
   ImpactBurst,
   KineticSubtitleBar,
-  LeaderCallout,
   SPRING_POP,
   SPRING_SLAM,
   SPRING_SMOOTH,
@@ -18,6 +17,12 @@ import {
   getImpactShake,
   type BeatTimingSpec,
 } from '../theme';
+import {
+  Camera3DRig,
+  GlassLeaderCallout,
+  VolumetricCloudFlythrough,
+} from '../aeMotionPrimitives';
+import { getWordCueFrame } from '../wordSyncTimeline';
 import type { InfographicsWorldPalette } from '../../engine/infographicsStyleBible';
 
 export interface WorldSceneProps {
@@ -38,9 +43,16 @@ export const Scene01GlobalWindow: React.FC<WorldSceneProps> = ({
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // Beat 1A (0..300f): Rich twilight Dhaka studio overlooking multi-plane sunset skyline
-  // Beat 1B (300..end): Silky 2.6x camera dive through laptop screen into World Intelligence Map!
-  const zoomSplit = interpolate(frame, [288, 362], [0, 1], {
+  // Word-locked Audio-First Cues (0ms drift against Charon narration)
+  const fxCue = getWordCueFrame(beat.id, 'taka-fx', 140);
+  const diveCue = getWordCueFrame(beat.id, 'window-dive', 402);
+  const nycCue = getWordCueFrame(beat.id, 'nyc-beacon', 575);
+  const lonCue = getWordCueFrame(beat.id, 'london-beacon', 610);
+  const sfCue = getWordCueFrame(beat.id, 'sf-beacon', 655);
+
+  // Beat 1A (0..diveCue): Rich twilight Dhaka studio overlooking multi-plane sunset skyline
+  // Beat 1B (diveCue..end): Silky 2.6x 3D Cloud Fly-Through dive through laptop screen into World Intelligence Map!
+  const zoomSplit = interpolate(frame, [diveCue, diveCue + 64], [0, 1], {
     easing: Easing.bezier(0.76, 0, 0.24, 1),
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
@@ -50,45 +62,58 @@ export const Scene01GlobalWindow: React.FC<WorldSceneProps> = ({
   const lampSwing = Math.sin(frame * 0.04) * 1.4;
   const steamOffset = (frame * 1.15) % 64;
   const fxRate = Math.round(
-    interpolate(frame, [75, 235], [1, 120], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+    interpolate(frame, [Math.max(20, fxCue - 45), fxCue + 55], [1, 120], {
+      extrapolateLeft: 'clamp',
+      extrapolateRight: 'clamp',
+    })
   );
 
-  // World signal flight arcs (Part 1B)
+  // World signal flight arcs (Part 1B) locked directly to spoken city names
   const arcLondon = 'M 742 425 Q 535 165 362 242';
   const arcNyc = 'M 742 425 Q 485 110 250 268';
   const arcSf = 'M 742 425 Q 920 140 1072 270';
 
-  const pLon = evolvePath(
-    interpolate(frame, [345, 425], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }),
-    arcLondon
-  );
   const pNyc = evolvePath(
-    interpolate(frame, [375, 455], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }),
+    interpolate(frame, [Math.max(diveCue + 20, nycCue - 48), nycCue + 12], [0, 1], {
+      extrapolateLeft: 'clamp',
+      extrapolateRight: 'clamp',
+    }),
     arcNyc
   );
+  const pLon = evolvePath(
+    interpolate(frame, [Math.max(diveCue + 28, lonCue - 44), lonCue + 12], [0, 1], {
+      extrapolateLeft: 'clamp',
+      extrapolateRight: 'clamp',
+    }),
+    arcLondon
+  );
   const pSf = evolvePath(
-    interpolate(frame, [405, 485], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }),
+    interpolate(frame, [Math.max(diveCue + 36, sfCue - 44), sfCue + 14], [0, 1], {
+      extrapolateLeft: 'clamp',
+      extrapolateRight: 'clamp',
+    }),
     arcSf
   );
 
-  const lonPop = spring({ frame: Math.max(0, frame - 418), fps, config: SPRING_POP });
-  const nycPop = spring({ frame: Math.max(0, frame - 448), fps, config: SPRING_POP });
-  const sfPop = spring({ frame: Math.max(0, frame - 478), fps, config: SPRING_POP });
+  const nycPop = spring({ frame: Math.max(0, frame - nycCue), fps, config: SPRING_POP });
+  const lonPop = spring({ frame: Math.max(0, frame - lonCue), fps, config: SPRING_POP });
+  const sfPop = spring({ frame: Math.max(0, frame - sfCue), fps, config: SPRING_POP });
 
   const deskScale =
     1 +
-    interpolate(frame, [0, 288], [0, 0.075], { extrapolateRight: 'clamp' }) +
+    interpolate(frame, [0, diveCue], [0, 0.08], { extrapolateRight: 'clamp' }) +
     zoomSplit * 2.55;
   const worldScale =
     0.86 +
     zoomSplit * 0.14 +
-    interpolate(frame, [362, durationInFrames], [0, 0.06], {
+    interpolate(frame, [diveCue + 64, durationInFrames], [0, 0.06], {
       extrapolateLeft: 'clamp',
       extrapolateRight: 'clamp',
     });
 
   return (
     <AbsoluteFill style={{ backgroundColor: '#132238' }}>
+      <Camera3DRig durationInFrames={durationInFrames} mode="orbital-push" intensity={0.9}>
       <svg width={1280} height={720} viewBox="0 0 1280 720" style={{ display: 'block' }}>
         <defs>
           <linearGradient id="dhakaSunsetSky6" x1="0" y1="0" x2="0" y2="1">
@@ -308,17 +333,17 @@ export const Scene01GlobalWindow: React.FC<WorldSceneProps> = ({
                 <rect x={-46} y={107} width={92} height={6} rx={3} fill="#94A3B8" />
               </g>
 
-              {/* Leader-Line Callout Pointing Directly to Laptop Global Window */}
-              <LeaderCallout
+              {/* Frosted-Glass AE Leader Callout Pointing Directly to Laptop Global Window */}
+              <GlassLeaderCallout
                 targetX={754}
                 targetY={412}
                 elbowX={812}
                 elbowY={356}
-                endX={1020}
+                endX={1060}
                 label="ONE GLOWING WINDOW"
                 sublabel="DIRECT TO GLOBAL MARKETS"
                 accent="#2AD08E"
-                delayFrames={92}
+                delayFrames={Math.max(40, fxCue - 15)}
               />
 
               {/* Split-Shaded Terracotta Clay Tea Cup ("Cha") with Translucent Steam */}
@@ -422,16 +447,16 @@ export const Scene01GlobalWindow: React.FC<WorldSceneProps> = ({
               <circle r={9} fill="#2AD08E" />
               <circle r={4} fill="#FFFFFF" />
             </g>
-            <LeaderCallout
+            <GlassLeaderCallout
               targetX={742}
               targetY={425}
               elbowX={784}
               elbowY={488}
-              endX={922}
+              endX={980}
               label="DHAKA HUB"
               sublabel="ORIGIN · UTC+6"
               accent="#2AD08E"
-              delayFrames={342}
+              delayFrames={diveCue + 24}
             />
 
             {/* Landmark 1: LONDON (Split-Shaded Big Ben Tower) */}
@@ -479,13 +504,23 @@ export const Scene01GlobalWindow: React.FC<WorldSceneProps> = ({
               size={48}
               fill="#FFFFFF"
               accent="#2AD08E"
-              delayFrames={356}
+              delayFrames={diveCue + 32}
             />
           </g>
         )}
       </svg>
+      </Camera3DRig>
+
+      {/* Volumetric 3D Cloud Fly-Through bridging Dhaka Desk -> World Map on the word "window" */}
+      <VolumetricCloudFlythrough
+        progress={zoomSplit}
+        tint="#FFF3E0"
+        shadeTint="#8DA8CC"
+        mistColor="rgba(210, 232, 255, 0.36)"
+      />
 
       <KineticSubtitleBar
+        beatId={beat.id}
         narration={beat.narration}
         durationInFrames={durationInFrames}
         enabled={subtitlesEnabled}
@@ -505,7 +540,11 @@ export const Scene02BiddingVsX: React.FC<WorldSceneProps> = ({
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const revealX = interpolate(frame, [350, 425], [0, 1], {
+  const slashCue = getWordCueFrame(beat.id, 'five-dollars-slash', 310);
+  const wipeCue = getWordCueFrame(beat.id, 'on-x-wipe', 404);
+  const zeroCue = getWordCueFrame(beat.id, 'zero-gatekeepers', 610);
+
+  const revealX = interpolate(frame, [wipeCue, wipeCue + 64], [0, 1], {
     easing: Easing.bezier(0.76, 0, 0.24, 1),
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
@@ -514,15 +553,19 @@ export const Scene02BiddingVsX: React.FC<WorldSceneProps> = ({
   const beltOffset = (frame * 5.8) % 80;
   const gearRot = frame * 1.1;
   const bidCount = Math.round(
-    interpolate(frame, [16, 260], [120, 10000], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+    interpolate(frame, [16, Math.max(80, slashCue - 10)], [120, 10000], {
+      extrapolateLeft: 'clamp',
+      extrapolateRight: 'clamp',
+    })
   );
-  const redSlash = spring({ frame: Math.max(0, frame - 275), fps, config: SPRING_SLAM });
-  const shake = getImpactShake(frame, 275, 16);
+  const redSlash = spring({ frame: Math.max(0, frame - slashCue), fps, config: SPRING_SLAM });
+  const shake = getImpactShake(frame, slashCue, 16);
   const beaconPulse = (frame * 2.4) % 180;
-  const towerPop = spring({ frame: Math.max(0, frame - 405), fps, config: SPRING_POP });
+  const towerPop = spring({ frame: Math.max(0, frame - (wipeCue + 36)), fps, config: SPRING_POP });
 
   return (
     <AbsoluteFill style={{ backgroundColor: '#241017' }}>
+      <Camera3DRig durationInFrames={durationInFrames} mode="dramatic-tilt" intensity={0.85}>
       <svg width={1280} height={720} viewBox="0 0 1280 720" style={{ display: 'block' }}>
         <defs>
           <linearGradient id="factoryBg6" x1="0" y1="0" x2="0" y2="1">
@@ -665,8 +708,8 @@ export const Scene02BiddingVsX: React.FC<WorldSceneProps> = ({
               delayFrames={12}
             />
 
-            {/* Blazing Red X Laser Slash + Impact Burst */}
-            {frame >= 275 && (
+            {/* Blazing Red X Laser Slash + Impact Burst (locked to "five dollars") */}
+            {frame >= slashCue && (
               <g transform={`translate(640, 356) scale(${Math.max(0.001, redSlash)})`}>
                 <line x1={-240} y1={-155} x2={240} y2={155} stroke="#FF3B47" strokeWidth={46} strokeLinecap="round" opacity={0.28} />
                 <line x1={240} y1={-155} x2={-240} y2={155} stroke="#FF3B47" strokeWidth={46} strokeLinecap="round" opacity={0.28} />
@@ -675,7 +718,7 @@ export const Scene02BiddingVsX: React.FC<WorldSceneProps> = ({
                 <line x1={-228} y1={-148} x2={228} y2={148} stroke="#FFE4E6" strokeWidth={7} strokeLinecap="round" opacity={0.55} />
               </g>
             )}
-            <ImpactBurst x={640} y={356} triggerFrame={275} color="#FFD166" radius={162} />
+            <ImpactBurst x={640} y={356} triggerFrame={slashCue} color="#FFD166" radius={162} />
           </g>
         </g>
 
@@ -735,6 +778,18 @@ export const Scene02BiddingVsX: React.FC<WorldSceneProps> = ({
                 </text>
               </g>
 
+              <GlassLeaderCallout
+                targetX={688}
+                targetY={248}
+                elbowX={772}
+                elbowY={204}
+                endX={1028}
+                label="DIRECT TO FOUNDERS"
+                sublabel="PUBLIC DECISION-MAKERS"
+                accent="#2AD08E"
+                delayFrames={Math.max(wipeCue + 55, zeroCue - 40)}
+              />
+
               <FloatingCallout
                 x={640}
                 y={96}
@@ -743,14 +798,16 @@ export const Scene02BiddingVsX: React.FC<WorldSceneProps> = ({
                 size={54}
                 fill="#FFFFFF"
                 accent="#FFD166"
-                delayFrames={426}
+                delayFrames={wipeCue + 40}
               />
             </g>
           </g>
         )}
       </svg>
+      </Camera3DRig>
 
       <KineticSubtitleBar
+        beatId={beat.id}
         narration={beat.narration}
         durationInFrames={durationInFrames}
         enabled={subtitlesEnabled}
@@ -770,22 +827,29 @@ export const Scene03KillAdMyth: React.FC<WorldSceneProps> = ({
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const panShift = interpolate(frame, [315, 412], [0, -860], {
+  const mythCue = getWordCueFrame(beat.id, 'pennies-myth-slam', 360);
+  const panCue = getWordCueFrame(beat.id, 'real-money-pan', 442);
+  const sellCue = getWordCueFrame(beat.id, 'selling-stacks', 580);
+
+  const panShift = interpolate(frame, [panCue, panCue + 82], [0, -860], {
     easing: Easing.bezier(0.76, 0, 0.24, 1),
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
 
-  const stampSlam = spring({ frame: Math.max(0, frame - 210), fps, config: SPRING_SLAM });
-  const shake = getImpactShake(frame, 210, 15);
+  const stampSlam = spring({ frame: Math.max(0, frame - mythCue), fps, config: SPRING_SLAM });
+  const shake = getImpactShake(frame, mythCue, 15);
   const pennyDropY = (frame * 6.2) % 192;
   const retainerVal = Math.round(
-    interpolate(frame, [415, 620], [0, 1500], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+    interpolate(frame, [panCue + 60, Math.min(durationInFrames - 20, sellCue + 160)], [0, 1500], {
+      extrapolateLeft: 'clamp',
+      extrapolateRight: 'clamp',
+    })
   );
 
-  const stack1 = spring({ frame: Math.max(0, frame - 398), fps, config: SPRING_POP });
-  const stack2 = spring({ frame: Math.max(0, frame - 442), fps, config: SPRING_POP });
-  const stack3 = spring({ frame: Math.max(0, frame - 486), fps, config: SPRING_POP });
+  const stack1 = spring({ frame: Math.max(0, frame - (panCue + 46)), fps, config: SPRING_POP });
+  const stack2 = spring({ frame: Math.max(0, frame - (panCue + 90)), fps, config: SPRING_POP });
+  const stack3 = spring({ frame: Math.max(0, frame - Math.max(panCue + 134, sellCue)), fps, config: SPRING_POP });
 
   // Authentic 3D Isometric Extruded Crisp Green $100 Bill Stacks (NO flat 2D rectangles!)
   const renderIsometricStack = (x: number, bills: number, progress: number) => {
@@ -904,8 +968,8 @@ export const Scene03KillAdMyth: React.FC<WorldSceneProps> = ({
               darkBackdrop={false}
             />
 
-            {/* Distressed Editorial Crimson "MYTH" Stamp Slam */}
-            {frame >= 210 && (
+            {/* Distressed Editorial Crimson "MYTH" Stamp Slam (locked to "pennies") */}
+            {frame >= mythCue && (
               <g transform={`translate(0, 392) rotate(-12) scale(${Math.max(0.001, stampSlam)})`}>
                 <rect x={-168} y={-54} width={336} height={108} rx={10} fill="rgba(214, 40, 40, 0.12)" stroke="#C82834" strokeWidth={10} />
                 <rect x={-154} y={-42} width={308} height={84} rx={5} fill="none" stroke="#C82834" strokeWidth={3} strokeDasharray="10 6" />
@@ -914,7 +978,7 @@ export const Scene03KillAdMyth: React.FC<WorldSceneProps> = ({
                 </text>
               </g>
             )}
-            <ImpactBurst x={0} y={392} triggerFrame={210} color="#C82834" secondaryColor="#F5B82E" radius={146} />
+            <ImpactBurst x={0} y={392} triggerFrame={mythCue} color="#C82834" secondaryColor="#F5B82E" radius={146} />
           </g>
 
           {/* ===== RIGHT SIDE: ISOMETRIC 3D $100 CASH TOWERS + WAX-SEALED RETAINER ===== */}
@@ -922,7 +986,7 @@ export const Scene03KillAdMyth: React.FC<WorldSceneProps> = ({
             {renderIsometricStack(-190, 9, stack1)}
             {renderIsometricStack(0, 14, stack2)}
             {renderIsometricStack(190, 18, stack3)}
-            <ImpactBurst x={190} y={248} triggerFrame={486} color="#F5B82E" secondaryColor="#2ECC71" radius={122} />
+            <ImpactBurst x={190} y={248} triggerFrame={Math.max(panCue + 134, sellCue)} color="#F5B82E" secondaryColor="#2ECC71" radius={122} />
 
             {/* Wax-Sealed Client Retainer Contract */}
             <g transform={`translate(390, 452) scale(${Math.max(0.001, stack3)})`}>
@@ -947,7 +1011,7 @@ export const Scene03KillAdMyth: React.FC<WorldSceneProps> = ({
               size={66}
               fill="#157A46"
               accent="#F5B82E"
-              delayFrames={404}
+              delayFrames={panCue + 54}
               darkBackdrop={false}
             />
           </g>
@@ -955,6 +1019,7 @@ export const Scene03KillAdMyth: React.FC<WorldSceneProps> = ({
       </svg>
 
       <KineticSubtitleBar
+        beatId={beat.id}
         narration={beat.narration}
         durationInFrames={durationInFrames}
         enabled={subtitlesEnabled}
@@ -973,21 +1038,33 @@ export const Scene04OneCraft: React.FC<WorldSceneProps> = ({
 }) => {
   const frame = useCurrentFrame();
 
-  const dollyX = interpolate(frame, [0, durationInFrames], [0, -1920], {
-    easing: Easing.inOut(Easing.sin),
-    extrapolateLeft: 'clamp',
-    extrapolateRight: 'clamp',
-  });
+  const videoCue = getWordCueFrame(beat.id, 'craft-video', 310);
+  const uiCue = getWordCueFrame(beat.id, 'craft-ui', 430);
+  const aiCue = getWordCueFrame(beat.id, 'craft-ai', 530);
+  const ghostCue = getWordCueFrame(beat.id, 'craft-ghost', 640);
+
+  // Word-locked multi-station dolly holding cleanly on each craft as it is spoken
+  const dollyX = interpolate(
+    frame,
+    [0, videoCue, uiCue, aiCue, ghostCue, durationInFrames],
+    [0, -140, -680, -1340, -1920, -1960],
+    {
+      easing: Easing.inOut(Easing.sin),
+      extrapolateLeft: 'clamp',
+      extrapolateRight: 'clamp',
+    }
+  );
 
   const gearRot = frame * 1.85;
   const clapAngle = -22 + Math.abs(Math.sin(frame * 0.14)) * 20;
-  const paperRise = Math.min(92, Math.max(0, (frame - 470) * 0.55));
+  const paperRise = Math.min(92, Math.max(0, (frame - Math.max(420, ghostCue - 80)) * 0.55));
   const stylusX = Math.sin(frame * 0.09) * 52;
   const stylusY = Math.cos(frame * 0.12) * 30;
   const playheadX = -112 + ((frame * 2.8) % 224);
 
   return (
     <AbsoluteFill style={{ backgroundColor: '#164E6B' }}>
+      <Camera3DRig durationInFrames={durationInFrames} mode="parallax-pan" intensity={0.65}>
       <svg width={1280} height={720} viewBox="0 0 1280 720" style={{ display: 'block' }}>
         <defs>
           <linearGradient id="craftWall6" x1="0" y1="0" x2="1" y2="0">
@@ -1159,8 +1236,10 @@ export const Scene04OneCraft: React.FC<WorldSceneProps> = ({
           </g>
         </g>
       </svg>
+      </Camera3DRig>
 
       <KineticSubtitleBar
+        beatId={beat.id}
         narration={beat.narration}
         durationInFrames={durationInFrames}
         enabled={subtitlesEnabled}

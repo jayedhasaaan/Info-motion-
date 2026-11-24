@@ -6,12 +6,17 @@ import {
   FONT_CONDENSED,
   ImpactBurst,
   KineticSubtitleBar,
-  LeaderCallout,
   SPRING_POP,
   SPRING_SMOOTH,
   SplitBuilding,
   getCameraTransform,
 } from '../theme';
+import {
+  Camera3DRig,
+  GlassLeaderCallout,
+  VolumetricCloudFlythrough,
+} from '../aeMotionPrimitives';
+import { getWordCueFrame } from '../wordSyncTimeline';
 import type { WorldSceneProps } from './ActOneScenes';
 
 // ============================================================================
@@ -25,23 +30,26 @@ export const Scene09PaymentsBD: React.FC<WorldSceneProps> = ({
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const planeP = interpolate(frame, [36, 435], [0, 1], {
+  const jetCue = getWordCueFrame(beat.id, 'payoneer-jet', 395);
+  const settleCue = getWordCueFrame(beat.id, 'bdt-settlement', 595);
+
+  const planeP = interpolate(frame, [Math.max(40, jetCue - 180), Math.min(settleCue, jetCue + 190)], [0, 1], {
     easing: Easing.inOut(Easing.sin),
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
   const planeX = interpolate(planeP, [0, 1], [-125, 725]);
-  const planeY = interpolate(planeP, [0, 0.5, 1], [234, 166, 194]);
+  const planeY = interpolate(planeP, [0, 0.5, 1], [274, 232, 248]);
   const planeRot = interpolate(planeP, [0, 0.5, 1], [-5, 0, -2]);
 
   const bdtAmount = Math.round(
-    interpolate(frame, [378, 618], [0, 180000], {
+    interpolate(frame, [settleCue - 20, Math.min(durationInFrames - 24, settleCue + 155)], [0, 180000], {
       extrapolateLeft: 'clamp',
       extrapolateRight: 'clamp',
     })
   );
-  const takaFan = spring({ frame: Math.max(0, frame - 420), fps, config: SPRING_POP });
-  const bankPop = spring({ frame: Math.max(0, frame - 210), fps, config: SPRING_SMOOTH });
+  const takaFan = spring({ frame: Math.max(0, frame - settleCue), fps, config: SPRING_POP });
+  const bankPop = spring({ frame: Math.max(0, frame - Math.max(180, jetCue - 80)), fps, config: SPRING_SMOOTH });
 
   return (
     <AbsoluteFill style={{ backgroundColor: '#1B6EC2' }}>
@@ -162,8 +170,8 @@ export const Scene09PaymentsBD: React.FC<WorldSceneProps> = ({
             </text>
           </g>
 
-          {/* Fanning Bangladeshi Taka Banknotes Bursting Above Bank */}
-          {frame >= 420 && (
+          {/* Fanning Bangladeshi Taka Banknotes Bursting Above Bank (locked to "settle") */}
+          {frame >= settleCue && (
             <g transform={`translate(1036, 318) scale(${Math.max(0.001, takaFan)})`}>
               {[-28, -14, 0, 14, 28].map((ang, bi) => (
                 <g key={bi} transform={`rotate(${ang}) translate(0, -106)`}>
@@ -177,15 +185,15 @@ export const Scene09PaymentsBD: React.FC<WorldSceneProps> = ({
               ))}
             </g>
           )}
-          <ImpactBurst x={1036} y={244} triggerFrame={420} color="#FFD166" secondaryColor="#2AD08E" radius={128} />
+          <ImpactBurst x={1036} y={244} triggerFrame={settleCue} color="#FFD166" secondaryColor="#2AD08E" radius={128} />
 
           <FloatingCallout
             x={420}
             y={104}
-            text={frame >= 378 ? `৳${bdtAmount.toLocaleString()} BDT` : 'USD → PAYONEER / WISE'}
+            text={frame >= settleCue - 20 ? `৳${bdtAmount.toLocaleString()} BDT` : 'USD → PAYONEER / WISE'}
             subtext="CLEAN LEGAL SETTLEMENT IN BANGLADESH"
             size={56}
-            fill={frame >= 378 ? '#FFD166' : '#FFFFFF'}
+            fill={frame >= settleCue - 20 ? '#FFD166' : '#FFFFFF'}
             accent="#2AD08E"
             delayFrames={12}
           />
@@ -193,6 +201,7 @@ export const Scene09PaymentsBD: React.FC<WorldSceneProps> = ({
       </svg>
 
       <KineticSubtitleBar
+        beatId={beat.id}
         narration={beat.narration}
         durationInFrames={durationInFrames}
         enabled={subtitlesEnabled}
@@ -212,20 +221,28 @@ export const Scene10NinetyDayMath: React.FC<WorldSceneProps> = ({
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const m1Pop = spring({ frame: Math.max(0, frame - 32), fps, config: SPRING_POP });
-  const m2Pop = spring({ frame: Math.max(0, frame - 235), fps, config: SPRING_POP });
-  const m3Pop = spring({ frame: Math.max(0, frame - 455), fps, config: SPRING_POP });
+  const m1Cue = getWordCueFrame(beat.id, 'month-one-tier', 165);
+  const m2Cue = getWordCueFrame(beat.id, 'month-two-tier', 350);
+  const m3Cue = getWordCueFrame(beat.id, 'month-three-tier', 592);
+
+  const m1Pop = spring({ frame: Math.max(0, frame - m1Cue), fps, config: SPRING_POP });
+  const m2Pop = spring({ frame: Math.max(0, frame - m2Cue), fps, config: SPRING_POP });
+  const m3Pop = spring({ frame: Math.max(0, frame - m3Cue), fps, config: SPRING_POP });
 
   const m2Val = Math.round(
-    interpolate(frame, [240, 360], [0, 300], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+    interpolate(frame, [m2Cue, m2Cue + 100], [0, 300], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
   );
   const m3Val = Math.round(
-    interpolate(frame, [460, 640], [300, 1500], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' })
+    interpolate(frame, [m3Cue, Math.min(durationInFrames - 20, m3Cue + 150)], [300, 1500], {
+      extrapolateLeft: 'clamp',
+      extrapolateRight: 'clamp',
+    })
   );
   const flagWave = Math.sin(frame * 0.14) * 6;
 
   return (
     <AbsoluteFill style={{ backgroundColor: '#1B5EA8' }}>
+      <Camera3DRig durationInFrames={durationInFrames} mode="altitude-rise" intensity={0.85}>
       <svg width={1280} height={720} viewBox="0 0 1280 720" style={{ display: 'block' }}>
         <defs>
           <linearGradient id="alpineSky6" x1="0" y1="0" x2="0" y2="1">
@@ -263,7 +280,7 @@ export const Scene10NinetyDayMath: React.FC<WorldSceneProps> = ({
               <polygon points="0,-86 68,0 0,0" fill="#C9462A" />
               <polygon points="-22,0 0,-52 22,0" fill="#1E2C3B" />
             </g>
-            <FloatingCallout x={210} y={372} text="$0" subtext="MONTH 1 · BUILD PROOF" size={58} fill="#FFFFFF" accent="#F26444" delayFrames={42} />
+            <FloatingCallout x={210} y={372} text="$0" subtext="MONTH 1 · BUILD PROOF" size={58} fill="#FFFFFF" accent="#F26444" delayFrames={m1Cue + 8} />
           </g>
 
           {/* TIER 2: MONTH 2 GRANITE OUTPOST ($300) */}
@@ -276,7 +293,7 @@ export const Scene10NinetyDayMath: React.FC<WorldSceneProps> = ({
               <path d={`M 3 -116 Q 38 ${-126 + flagWave} 82 -108 L 82 -62 Q 38 ${-78 + flagWave} 3 -66 Z`} fill="#1FB57A" />
               <path d={`M 3 -90 Q 38 ${-100 + flagWave} 82 -84 L 82 -62 Q 38 ${-78 + flagWave} 3 -66 Z`} fill="#148F5E" />
             </g>
-            <FloatingCallout x={635} y={222} text={`$${m2Val}`} subtext="MONTH 2 · FIRST CLIENT" size={60} fill="#2AD08E" accent="#FFD166" delayFrames={240} />
+            <FloatingCallout x={635} y={222} text={`$${m2Val}`} subtext="MONTH 2 · FIRST CLIENT" size={60} fill="#2AD08E" accent="#FFD166" delayFrames={m2Cue + 6} />
           </g>
 
           {/* TIER 3: MONTH 3 GOLDEN SUMMIT ($1,500/MO) */}
@@ -291,13 +308,15 @@ export const Scene10NinetyDayMath: React.FC<WorldSceneProps> = ({
               <polygon points="0,-80 24,0 0,0" fill="#D4941A" />
               <circle cx={0} cy={-82} r={13} fill="#FFF8D6" />
             </g>
-            <ImpactBurst x={1065} y={200} triggerFrame={460} color="#FFD166" secondaryColor="#FFFFFF" radius={120} />
-            <FloatingCallout x={1060} y={98} text={`$${m3Val.toLocaleString()}/MO`} subtext="MONTH 3 · ৳1.8 LAKH" size={56} fill="#FFD166" accent="#2AD08E" delayFrames={460} />
+            <ImpactBurst x={1065} y={200} triggerFrame={m3Cue + 4} color="#FFD166" secondaryColor="#FFFFFF" radius={120} />
+            <FloatingCallout x={1060} y={98} text={`$${m3Val.toLocaleString()}/MO`} subtext="MONTH 3 · ৳1.8 LAKH" size={56} fill="#FFD166" accent="#2AD08E" delayFrames={m3Cue + 4} />
           </g>
         </g>
       </svg>
+      </Camera3DRig>
 
       <KineticSubtitleBar
+        beatId={beat.id}
         narration={beat.narration}
         durationInFrames={durationInFrames}
         enabled={subtitlesEnabled}
@@ -316,12 +335,17 @@ export const Scene11EveningEngine: React.FC<WorldSceneProps> = ({
 }) => {
   const frame = useCurrentFrame();
 
-  const sweepDeg = interpolate(frame, [26, durationInFrames - 85], [0, 360], {
+  const craftCue = getWordCueFrame(beat.id, 'sector-craft', 195);
+  const replyCue = getWordCueFrame(beat.id, 'sector-replies', 318);
+  const proofCue = getWordCueFrame(beat.id, 'sector-proof', 442);
+  const repeatCue = getWordCueFrame(beat.id, 'repeat-ninety', 585);
+
+  const sweepDeg = interpolate(frame, [Math.max(20, craftCue - 16), Math.max(proofCue + 90, repeatCue - 12)], [0, 360], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
   const repeatCount = Math.round(
-    interpolate(frame, [415, durationInFrames - 36], [1, 90], {
+    interpolate(frame, [repeatCue, Math.min(durationInFrames - 16, repeatCue + 64)], [1, 90], {
       extrapolateLeft: 'clamp',
       extrapolateRight: 'clamp',
     })
@@ -410,10 +434,10 @@ export const Scene11EveningEngine: React.FC<WorldSceneProps> = ({
             <circle r={7} fill="#0F172A" />
           </g>
 
-          {/* Crisp Infographics Show Leader-Line Labels For Each 40m Sector */}
-          <LeaderCallout targetX={754} targetY={252} elbowX={840} elbowY={212} endX={1028} label="40m CRAFT" sublabel="SHARPEN ONE SKILL" accent="#FF7B54" delayFrames={48} />
-          <LeaderCallout targetX={778} targetY={362} elbowX={840} elbowY={328} endX={1028} label="40m REPLIES" sublabel="GLOBAL FOUNDERS" accent="#66C2F0" delayFrames={188} />
-          <LeaderCallout targetX={730} targetY={446} elbowX={840} elbowY={444} endX={1028} label="40m PROOF" sublabel="SHIP IN PUBLIC" accent="#2AD08E" delayFrames={322} />
+          {/* Frosted-Glass AE Leader Callouts For Each 40m Sector (Word-Locked!) */}
+          <GlassLeaderCallout targetX={754} targetY={252} elbowX={836} elbowY={218} endX={1068} label="40m CRAFT" sublabel="SHARPEN ONE SKILL" accent="#FF7B54" delayFrames={craftCue} />
+          <GlassLeaderCallout targetX={778} targetY={358} elbowX={836} elbowY={336} endX={1068} label="40m REPLIES" sublabel="GLOBAL FOUNDERS" accent="#66C2F0" delayFrames={replyCue} />
+          <GlassLeaderCallout targetX={730} targetY={446} elbowX={836} elbowY={454} endX={1068} label="40m PROOF" sublabel="SHIP IN PUBLIC" accent="#2AD08E" delayFrames={proofCue} />
 
           {/* Split-Shaded Mahogany Metronome on Right Desk */}
           <g transform="translate(1110, 530)">
@@ -438,7 +462,7 @@ export const Scene11EveningEngine: React.FC<WorldSceneProps> = ({
           <FloatingCallout
             x={640}
             y={86}
-            text={frame >= 415 ? `REPEAT × ${repeatCount}` : '2 HOURS EVERY EVENING'}
+            text={frame >= repeatCue ? `REPEAT × ${repeatCount}` : '2 HOURS EVERY EVENING'}
             subtext="COMPOUNDING DAILY EXECUTION"
             size={56}
             fill="#FFD166"
@@ -449,6 +473,7 @@ export const Scene11EveningEngine: React.FC<WorldSceneProps> = ({
       </svg>
 
       <KineticSubtitleBar
+        beatId={beat.id}
         narration={beat.narration}
         durationInFrames={durationInFrames}
         enabled={subtitlesEnabled}
@@ -467,7 +492,14 @@ export const Scene12BengalCompassFinale: React.FC<WorldSceneProps> = ({
 }) => {
   const frame = useCurrentFrame();
 
-  const sunRiseY = interpolate(frame, [0, 315], [488, 286], {
+  const cloudPartCue = getWordCueFrame(beat.id, 'sunrise-clouds', 418);
+  const cloudPartP = interpolate(frame, [cloudPartCue, cloudPartCue + 96], [0, 1], {
+    easing: Easing.bezier(0.65, 0, 0.35, 1),
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+
+  const sunRiseY = interpolate(frame, [0, 315], [488, 338], {
     easing: Easing.out(Easing.cubic),
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
@@ -477,6 +509,7 @@ export const Scene12BengalCompassFinale: React.FC<WorldSceneProps> = ({
 
   return (
     <AbsoluteFill style={{ backgroundColor: '#1E3A63' }}>
+      <Camera3DRig durationInFrames={durationInFrames} mode="altitude-rise" intensity={0.85}>
       <svg width={1280} height={720} viewBox="0 0 1280 720" style={{ display: 'block' }}>
         <defs>
           <linearGradient id="bengalDawn6" x1="0" y1="0" x2="0" y2="1">
@@ -591,8 +624,19 @@ export const Scene12BengalCompassFinale: React.FC<WorldSceneProps> = ({
           />
         </g>
       </svg>
+      </Camera3DRig>
+
+      {/* Volumetric 3D Golden Sunrise Cloud Parting right on "Build in public on X" */}
+      <VolumetricCloudFlythrough
+        progress={cloudPartP}
+        tint="#FFE7C4"
+        shadeTint="#C96D68"
+        mistColor="rgba(255, 214, 148, 0.36)"
+        opacity={0.9}
+      />
 
       <KineticSubtitleBar
+        beatId={beat.id}
         narration={beat.narration}
         durationInFrames={durationInFrames}
         enabled={subtitlesEnabled}

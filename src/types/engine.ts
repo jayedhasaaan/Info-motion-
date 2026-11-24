@@ -5,6 +5,8 @@ export type SubtitleMode = 'off' | 'luxury-reel';
 export type KokoroQuantization = 'int8' | 'fp16' | 'fp32';
 export type WhisperModelTier = 'base.en' | 'small.en';
 export type ClipFramingMode = 'ema-single' | 'podcast-split' | 'motion-split';
+export type HardwareProfile = 'laptop-16gb-cpu' | 'apple-silicon' | 'nvidia-cuda';
+export type SyncMode = 'audio-first-per-beat' | 'bring-your-own-audio';
 
 export type VisualObjectId =
   | 'sovereign-coins'
@@ -210,6 +212,13 @@ export interface SkillConfig {
   removeDeadAir: boolean;
   deadAirThresholdDb: number;
   injectMotionOverlays: boolean;
+  enable3DCloudFlythrough: boolean;
+  enableSpeedRampBlur: boolean;
+  enable3DExtrudedProps: boolean;
+  enableWordLockedType: boolean;
+  enableTactileFinish: boolean;
+  hardwareProfile: HardwareProfile;
+  syncMode: SyncMode;
 }
 
 export interface ViralMoment {

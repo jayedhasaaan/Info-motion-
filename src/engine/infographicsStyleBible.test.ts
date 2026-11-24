@@ -11,12 +11,15 @@ import {
 } from './infographicsStyleBible';
 import { createInitialBlueprint } from '../data/presets';
 
-test('Infographics Show Ultra style bible ships 12 worlds, 12-domain matrix, 8 shot archetypes, and 18-point Giga Quality Gate', () => {
+test('Infographics Show Ultra style bible ships 12 worlds, 12-domain matrix, 8 shot archetypes, and 22-point Giga Quality Gate', () => {
   assert.equal(Object.keys(INFOGRAPHICS_WORLD_PALETTES).length, 12);
   assert.equal(INFOGRAPHICS_SHOW_BREAKDOWN.length, 6);
   assert.equal(VISUAL_METAPHOR_MATRIX.length, 12);
   assert.equal(SHOT_COMPOSITION_ARCHETYPES.length, 8);
-  assert.equal(GIGA_QUALITY_CHECKLIST.length, 18);
+  assert.equal(GIGA_QUALITY_CHECKLIST.length, 22);
+  assert.ok(GIGA_QUALITY_CHECKLIST.some((i) => i.id === 'qg-19' && i.nonNegotiableStandard.includes('WhisperX')));
+  assert.ok(GIGA_QUALITY_CHECKLIST.some((i) => i.id === 'qg-20' && i.nonNegotiableStandard.includes('VolumetricCloudFlythrough')));
+  assert.ok(GIGA_QUALITY_CHECKLIST.some((i) => i.id === 'qg-22' && i.nonNegotiableStandard.includes('isSoftwareGl')));
   assert.ok(INFOGRAPHICS_SHOW_ULTRA_SYSTEM_PROMPT.includes('ZERO BOX TEMPLATES'));
   assert.ok(INFOGRAPHICS_SHOW_ULTRA_SYSTEM_PROMPT.includes('ZERO HUMAN FRAMES'));
   assert.ok(INFOGRAPHICS_SHOW_ULTRA_SYSTEM_PROMPT.includes('The Infographics Show'));

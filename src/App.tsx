@@ -244,7 +244,7 @@ export default function App() {
               <span>
                 {activeTab === 'clipper'
                   ? 'YouTube Most Replayed Radar · EMA 9:16 Smart Crop'
-                  : `Infographics Show Broadcast v6.0 · ${repoFiles.length} Self-Contained Files · Kokoro-82M (${config.kokoroQuantization.toUpperCase()})`}
+                  : `Sovereign Motion v7.0 · Infographics Show × AE 2D+3D · ${repoFiles.length} Files · Audio-First Sync`}
               </span>
             </div>
           )}
@@ -304,8 +304,8 @@ export default function App() {
       {/* Quiet Editorial Footer */}
       <footer className="border-t border-[#DCE3EE] dark:border-[#1B263B] py-6 mt-10">
         <div className="max-w-[1380px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-[#526075] dark:text-[#8B9BB4]">
-          <span>Sovereign Motion · Infographics Show Broadcast v6.0 Studio & Antigravity Skill</span>
-          <span>Lineless Split-Shaded Art · Zero Box Templates · Zero Human Frames · 60fps AE Transitions</span>
+          <span>Sovereign Motion · Infographics Show × AE 2D+3D v7.0 Studio & Antigravity Skill</span>
+          <span>Audio-First Word-Lock · 3D Cloud Fly-Throughs · 8 AE Transitions · 16GB Laptop CPU Safe</span>
         </div>
       </footer>
 

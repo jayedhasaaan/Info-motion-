@@ -26,6 +26,7 @@ import { playLuxurySfx } from '../engine/sfxEngine';
 import { BangladeshXFilm } from '../remotion/BangladeshXFilm';
 import { FILM_FPS } from '../remotion/theme';
 import { BANGLADESH_X_TIMELINE, TOTAL_FILM_FRAMES } from '../remotion/timingMath';
+import { getLockedBeatSync } from '../remotion/wordSyncTimeline';
 import type {
   PaletteMode,
   SkillConfig,
@@ -68,16 +69,16 @@ const QUICK_CRITIQUES = [
 ];
 
 const TRANSITION_LABELS = [
-  'Zoom-Through',
-  'AE Whip Pan',
+  '3D Cloud Dive',
+  'AE Smear Whip',
   'Diagonal Sweep',
   'Inked Iris',
   'Shutter Wipe',
-  'Liquid Wave',
-  'Diagonal Sweep',
-  'Vault Iris',
-  'Whip Pan Up',
-  'Shutter Wipe',
+  '3D Cloud Dusk',
+  'Match-Cut Morph',
+  'Vault Zoom-Thru',
+  '3D Cloud Climb',
+  'Match-Cut Clock',
   'Sunrise Wave',
   'Finale Hold',
 ];
@@ -1000,19 +1001,19 @@ export function DirectorStudioView({
   const activeScene = blueprint.scenes[activeBeatIdx] ?? blueprint.scenes[0];
   const localCommands = [
     {
-      id: 'audit',
-      step: '1. Enforce 18-Point Infographics Ultra Gate',
-      cmd: 'node scripts/audit_infographics_quality.mjs --blueprint templates/active_blueprint.json',
+      id: 'kokoro',
+      step: '1. Audio-First Kokoro-82M + WhisperX Word Lock',
+      cmd: 'python scripts/generate_audio_kokoro.py --blueprint templates/active_blueprint.json --out project/ --fps 60',
     },
     {
-      id: 'kokoro',
-      step: '2. Local Kokoro-82M Audio + WhisperX Sync',
-      cmd: 'python scripts/generate_audio_kokoro.py --blueprint templates/active_blueprint.json --out project/',
+      id: 'audit',
+      step: '2. Enforce 22-Point AE 2D+3D & Sync Gate',
+      cmd: 'node scripts/audit_infographics_quality.mjs --blueprint templates/active_blueprint.json --timeline project/timeline.locked.json',
     },
     {
       id: 'render',
-      step: '3. 60fps Remotion HD Render + 5-Layer Pro SFX',
-      cmd: 'node scripts/render_remotion_60fps.mjs --composition MainFilm --audio project/master_narration.wav --timeline project/timeline.synced.json --out project/final_master.mp4',
+      step: '3. 60fps Remotion HD + 6-Layer Word SFX + FFprobe',
+      cmd: `node scripts/render_remotion_60fps.mjs --composition MainFilm --audio project/master_narration.wav --timeline project/timeline.locked.json --out project/final_master.mp4 --concurrency ${config.hardwareProfile === 'nvidia-cuda' ? 8 : config.hardwareProfile === 'apple-silicon' ? 6 : 4}`,
     },
   ];
 
@@ -1240,7 +1241,7 @@ export function DirectorStudioView({
                     </div>
                     <span className="text-[11px] text-[#059669] dark:text-[#2AD08E] font-medium">
                       {renderedVideo.engine ||
-                        'Infographics Show Broadcast v6.0 · Lineless Split-Shaded · 60fps'}
+                        'Infographics Show × AE 2D+3D v7.0 · 60fps · Audio-First Word-Synced'}
                     </span>
                   </div>
 
@@ -1248,7 +1249,7 @@ export function DirectorStudioView({
                     <div className="space-y-3 pt-3 border-t border-[#DCE3EE] dark:border-[#1E293B]">
                       <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
                         <span className="font-semibold text-[#0F172A] dark:text-[#F8FAFC]">
-                          12-Scene Broadcast NLE Storyboard Timeline
+                          12-Scene Broadcast NLE Timeline · Word-Locked Sync
                         </span>
                         <span className="text-[11px] text-[#526075] dark:text-[#8B9BB4]">
                           Click any beat to jump the 60fps MP4 directly to that scene
@@ -1260,8 +1261,6 @@ export function DirectorStudioView({
                         className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2"
                       >
                         {BANGLADESH_X_TIMELINE.slots.map((slot, idx) => {
-                          const worldList = Object.values(INFOGRAPHICS_WORLD_PALETTES);
-                          const world = worldList[idx % worldList.length];
                           const isActive = mp4ActiveBeatIdx === idx;
                           return (
                             <button
@@ -1275,58 +1274,72 @@ export function DirectorStudioView({
                                   void mp4VideoRef.current.play().catch(() => {});
                                 }
                               }}
-                              className={`text-left px-3 py-2 rounded-lg border text-xs transition-colors cursor-pointer relative overflow-hidden ${
+                              className={`text-left px-3 py-2 rounded-lg border text-xs transition-colors cursor-pointer ${
                                 isActive
                                   ? 'border-[#D97706] dark:border-[#F5B82E] bg-[#F7F9FC] dark:bg-[#182132] text-[#0F172A] dark:text-[#F8FAFC]'
                                   : 'border-[#DCE3EE] dark:border-[#1E293B] text-[#526075] dark:text-[#8B9BB4] hover:border-[#94A3B8] dark:hover:border-[#334155] hover:text-[#0F172A] dark:hover:text-[#F8FAFC]'
                               }`}
                             >
-                              <div
-                                className="absolute left-0 top-0 bottom-0 w-1"
-                                style={{ backgroundColor: world.primary }}
-                                aria-hidden="true"
-                              />
-                              <div className="pl-1.5">
-                                <div className="font-mono-tabular text-[10px] text-[#D97706] dark:text-[#F5B82E] flex items-center justify-between gap-1">
-                                  <span>
-                                    {String(idx + 1).padStart(2, '0')} ·{' '}
-                                    {formatTimecode(slot.beat.startSec)}
-                                  </span>
-                                  <span className="text-[#64748B] dark:text-[#94A3B8] truncate">
-                                    {TRANSITION_LABELS[idx] ?? 'Cut'}
-                                  </span>
-                                </div>
-                                <div className="font-medium truncate mt-0.5">
-                                  {slot.beat.headline}
-                                </div>
+                              <div className="font-mono-tabular text-[10px] text-[#D97706] dark:text-[#F5B82E] flex items-center justify-between gap-1">
+                                <span>
+                                  {String(idx + 1).padStart(2, '0')} ·{' '}
+                                  {formatTimecode(slot.beat.startSec)}
+                                </span>
+                                <span className="text-[#64748B] dark:text-[#94A3B8] truncate">
+                                  {TRANSITION_LABELS[idx] ?? 'Cut'}
+                                </span>
+                              </div>
+                              <div className="font-medium truncate mt-0.5">
+                                {slot.beat.headline}
                               </div>
                             </button>
                           );
                         })}
                       </div>
 
-                      {BANGLADESH_X_TIMELINE.slots[mp4ActiveBeatIdx] && (
-                        <div className="rounded-lg bg-[#F7F9FC] dark:bg-[#0B0F17] border border-[#DCE3EE] dark:border-[#1E293B] px-4 py-3 grid grid-cols-1 md:grid-cols-[1.5fr_1fr] gap-3 text-xs">
-                          <div>
-                            <p className="font-semibold text-[#0F172A] dark:text-[#F8FAFC] mb-0.5">
-                              Scene {String(mp4ActiveBeatIdx + 1).padStart(2, '0')} ·{' '}
-                              {BANGLADESH_X_TIMELINE.slots[mp4ActiveBeatIdx].beat.headline}
-                            </p>
-                            <p className="text-[#526075] dark:text-[#8B9BB4] leading-relaxed">
-                              “{BANGLADESH_X_TIMELINE.slots[mp4ActiveBeatIdx].beat.narration}”
-                            </p>
+                      {BANGLADESH_X_TIMELINE.slots[mp4ActiveBeatIdx] && (() => {
+                        const activeSlot = BANGLADESH_X_TIMELINE.slots[mp4ActiveBeatIdx];
+                        const lockedBeat = getLockedBeatSync(activeSlot.beat.id);
+                        return (
+                          <div
+                            data-testid="active-beat-word-cues"
+                            className="rounded-lg bg-[#F7F9FC] dark:bg-[#0B0F17] border border-[#DCE3EE] dark:border-[#1E293B] px-4 py-3 grid grid-cols-1 md:grid-cols-[1.35fr_1fr] gap-4 text-xs"
+                          >
+                            <div>
+                              <p className="font-semibold text-[#0F172A] dark:text-[#F8FAFC] mb-0.5">
+                                Scene {String(mp4ActiveBeatIdx + 1).padStart(2, '0')} ·{' '}
+                                {activeSlot.beat.headline}
+                              </p>
+                              <p className="text-[#526075] dark:text-[#8B9BB4] leading-relaxed">
+                                “{activeSlot.beat.narration}”
+                              </p>
+                            </div>
+                            <div className="md:border-l md:border-[#DCE3EE] md:dark:border-[#1E293B] md:pl-4 space-y-1.5">
+                              <p className="font-semibold text-[#D97706] dark:text-[#F5B82E]">
+                                Exit Transition: {TRANSITION_LABELS[mp4ActiveBeatIdx] ?? 'Smooth Cut'} ·{' '}
+                                {lockedBeat?.cues.length ?? 0} Word-Locked Cues
+                              </p>
+                              {lockedBeat && (
+                                <ul className="space-y-1 text-[11px] text-[#526075] dark:text-[#8B9BB4]">
+                                  {lockedBeat.cues.map((cue) => (
+                                    <li
+                                      key={cue.id}
+                                      className="flex items-baseline justify-between gap-2 font-mono-tabular"
+                                    >
+                                      <span className="text-[#0F172A] dark:text-[#E2E8F0] truncate">
+                                        “{cue.keyword}” → {cue.label}
+                                      </span>
+                                      <span className="text-[#059669] dark:text-[#2AD08E] shrink-0">
+                                        {cue.globalSec.toFixed(2)}s
+                                      </span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              )}
+                            </div>
                           </div>
-                          <div className="md:border-l md:border-[#DCE3EE] md:dark:border-[#1E293B] md:pl-3">
-                            <p className="font-semibold text-[#D97706] dark:text-[#F5B82E] mb-0.5">
-                              AE Transition · {TRANSITION_LABELS[mp4ActiveBeatIdx] ?? 'Smooth Cut'}
-                            </p>
-                            <p className="text-[#526075] dark:text-[#8B9BB4] leading-relaxed">
-                              Lineless split-shaded 2.5D architectural set with animated leader
-                              callouts, 45° cast shadows, and 5-layer stereo SFX.
-                            </p>
-                          </div>
-                        </div>
-                      )}
+                        );
+                      })()}
                     </div>
                   )}
                 </>
@@ -1371,7 +1384,7 @@ export function DirectorStudioView({
 
               <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-[#526075] dark:text-[#8B9BB4]">
                 <span className="font-mono-tabular text-[#0F172A] dark:text-[#F8FAFC] font-semibold">
-                  Remotion 60fps Engine · 1280×720 · {TOTAL_FILM_FRAMES} frames · 6 AE Transitions
+                  Remotion 60fps Engine · 1280×720 · {TOTAL_FILM_FRAMES} frames · 8 AE 2D+3D Transitions
                 </span>
                 <span className="text-[11px]">
                   Click any beat below to jump directly to that real-world set
@@ -1511,17 +1524,17 @@ export function DirectorStudioView({
         {/* Right: Clean Local Antigravity Production Handoff */}
         <aside className="rounded-xl bg-white dark:bg-[#111722] border border-[#DCE3EE] dark:border-[#1E293B] p-5 sm:p-6 space-y-5">
           <div>
-            <p className="text-xs font-medium text-[#D97706] dark:text-[#F5B82E] mb-1">
-              Antigravity IDE Broadcast v6.0 · 29 Self-Contained Files
+            <p className="text-xs font-medium text-[#D97706] dark:text-[#F5B82E] mb-1 font-mono-tabular">
+              Antigravity IDE v7.0 · 33 Self-Contained Files
             </p>
             <h2 className="font-editorial text-xl font-extrabold text-[#0F172A] dark:text-[#F8FAFC]">
-              Consistent 60fps Broadcast Quality
+              Consistent AE 2D+3D Quality · 0ms Sync Drift
             </h2>
             <p className="mt-1.5 text-xs text-[#526075] dark:text-[#8B9BB4] leading-relaxed">
-              Ships the lineless split-shaded <code>proPrimitives.tsx</code> (
-              <code>LeaderCallout</code>, <code>SplitBuilding</code>), 12-Domain Playbook, 8 Shot
-              Archetypes, 18-Point Quality Gate, 6 AE transitions, and 5-layer SFX + Kokoro-82M
-              pipeline.
+              Ships <code>aeMotionEngine.tsx</code> (3D Cloud Fly-Throughs, <code>Camera3DRig</code>
+              , <code>GlassLeaderCallout</code>), <code>hero3DProps.tsx</code> (Three.js PBR + 16GB
+              laptop guard), 22-Point Quality Gate, 8 AE transitions, and Audio-First Kokoro-82M +
+              WhisperX word lock.
             </p>
           </div>
 

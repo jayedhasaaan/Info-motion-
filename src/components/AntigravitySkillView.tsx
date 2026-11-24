@@ -8,10 +8,16 @@ import {
   VISUAL_METAPHOR_MATRIX,
 } from '../engine/infographicsStyleBible';
 import { calculateHardwareBudget } from '../engine/motionMath';
+import {
+  LOCKED_WORD_TIMELINE,
+  auditSyncIntegrity,
+} from '../remotion/wordSyncTimeline';
 import type {
+  HardwareProfile,
   KokoroQuantization,
   SkillConfig,
   SkillRepoFile,
+  SyncMode,
   VideoFormatId,
   WhisperModelTier,
 } from '../types/engine';
@@ -25,11 +31,51 @@ interface AntigravitySkillViewProps {
 }
 
 type TrainingInspectorTab =
+  | 'sync-inspector'
   | 'quality-gate'
   | 'shot-archetypes'
   | 'metaphors'
   | 'color-worlds'
   | 'ecosystem';
+
+const AE_TWIST_ITEMS: Array<{
+  key: keyof Pick<
+    SkillConfig,
+    | 'enable3DCloudFlythrough'
+    | 'enableSpeedRampBlur'
+    | 'enable3DExtrudedProps'
+    | 'enableWordLockedType'
+    | 'enableTactileFinish'
+  >;
+  label: string;
+  spec: string;
+}> = [
+  {
+    key: 'enable3DCloudFlythrough',
+    label: '3D Volumetric Cloud Fly-Throughs & Camera3DRig',
+    spec: '7-layer parting clouds + 1240px CSS 3D perspective rig',
+  },
+  {
+    key: 'enableSpeedRampBlur',
+    label: 'AE Speed-Ramped Match Cuts & Smear Blur',
+    spec: 'Velocity-derivative skew + optical streaks + rotational morphs',
+  },
+  {
+    key: 'enable3DExtrudedProps',
+    label: '3D Extruded Maps & Isometric Props',
+    spec: 'Three.js PBR + RoomEnvironment + isSoftwareGl 16GB guard',
+  },
+  {
+    key: 'enableWordLockedType',
+    label: 'Word-Locked Kinetic Typography & Counters',
+    spec: 'Audio-First WhisperX cueFrames{} (<= 16.7ms A/V drift)',
+  },
+  {
+    key: 'enableTactileFinish',
+    label: 'Tactile Documentary Finish & Glass Callouts',
+    spec: '24fps stepped grain + corner halftones + obsidian glass cards',
+  },
+];
 
 export function AntigravitySkillView({
   config,
@@ -41,7 +87,8 @@ export function AntigravitySkillView({
   const [selectedPath, setSelectedPath] = useState(files[0]?.path ?? 'SKILL.md');
   const [budgetFormat, setBudgetFormat] = useState<VideoFormatId>('deepdive-30m');
   const [copiedFile, setCopiedFile] = useState(false);
-  const [trainingTab, setTrainingTab] = useState<TrainingInspectorTab>('quality-gate');
+  const [trainingTab, setTrainingTab] = useState<TrainingInspectorTab>('sync-inspector');
+  const syncAudit = auditSyncIntegrity(60);
 
   const selectedFile = files.find((f) => f.path === selectedPath) ?? files[0];
   const budget = calculateHardwareBudget({
@@ -69,17 +116,17 @@ export function AntigravitySkillView({
       {/* Header */}
       <div className="flex flex-wrap items-end justify-between gap-4 pb-6 border-b border-[#DCE3EE] dark:border-[#1E293B]">
         <div>
-          <p className="text-xs font-medium text-[#D97706] dark:text-[#F5B82E] mb-1">
-            Antigravity IDE Broadcast v6.0 · {files.length} Self-Contained Files
+          <p className="text-xs font-medium text-[#D97706] dark:text-[#F5B82E] mb-1 font-mono-tabular">
+            Sovereign Motion v7.0 · Standalone Antigravity Skill · {files.length} Self-Contained Files
           </p>
           <h1 className="font-editorial text-2xl sm:text-3xl font-extrabold text-[#0F172A] dark:text-[#F8FAFC]">
-            Infographics Show Broadcast — Antigravity Skill & Local Engine
+            Infographics Show × AE 2D+3D — Antigravity Skill & Local Engine
           </h1>
           <p className="mt-1.5 text-xs sm:text-sm text-[#526075] dark:text-[#8B9BB4] max-w-2xl">
-            Ships the lineless split-shaded <code>proPrimitives.tsx</code> (
-            <code>LeaderCallout</code>, <code>SplitBuilding</code>), 12-Domain Creative Playbook, 8
-            Shot-Composition Archetypes, 6 AE-Bezier Remotion transitions, executable 18-Point
-            Pro-Editor Quality Gate, and 5-layer SFX + Kokoro-82M pipeline.
+            Ships <code>aeMotionEngine.tsx</code> (3D Cloud Fly-Throughs, <code>Camera3DRig</code>,{' '}
+            <code>GlassLeaderCallout</code>), <code>hero3DProps.tsx</code> (Three.js PBR with{' '}
+            <code>isSoftwareGl</code> 16GB laptop guard), 8 AE-Bezier transitions, Audio-First
+            per-beat Kokoro-82M + WhisperX word lock, and a 22-Point Quality Gate.
           </p>
         </div>
 
@@ -91,6 +138,123 @@ export function AntigravitySkillView({
           <Download className="w-4 h-4" />
           Download {config.repoName}.zip
         </button>
+      </div>
+
+      {/* v7.0 Viral AE 2D+3D Twists + Hardware & Audio-First Sync Configuration */}
+      <div
+        data-testid="v7-ae-config-panel"
+        className="rounded-xl bg-white dark:bg-[#111722] border border-[#DCE3EE] dark:border-[#1E293B] p-6 space-y-5"
+      >
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 className="font-editorial text-lg font-bold text-[#0F172A] dark:text-[#F8FAFC]">
+              After Effects 2D+3D Viral Twists & Local Hardware Profile
+            </h2>
+            <p className="text-xs text-[#526075] dark:text-[#8B9BB4] mt-0.5">
+              Every toggle below dynamically rewrites your exported <code>SKILL.md</code>, render
+              concurrency ceiling, and Audio-First WhisperX sync pipeline.
+            </p>
+          </div>
+          <span className="font-mono-tabular text-xs font-semibold text-[#059669] dark:text-[#2AD08E]">
+            {AE_TWIST_ITEMS.filter((item) => config[item.key]).length}/5 Twists Active · Max Drift{' '}
+            {syncAudit.maxBoundaryDriftMs}ms
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
+          {AE_TWIST_ITEMS.map((item) => {
+            const enabled = config[item.key];
+            return (
+              <button
+                key={item.key}
+                type="button"
+                data-testid={`twist-toggle-${item.key}`}
+                aria-pressed={enabled}
+                onClick={() => onUpdateConfig({ ...config, [item.key]: !enabled })}
+                className={`text-left p-3.5 rounded-lg border transition-colors cursor-pointer space-y-1.5 ${
+                  enabled
+                    ? 'border-[#D97706] dark:border-[#F5B82E] bg-[#F7F9FC] dark:bg-[#161F30]'
+                    : 'border-[#DCE3EE] dark:border-[#1E293B] bg-transparent opacity-70 hover:opacity-100'
+                }`}
+              >
+                <div className="flex items-center justify-between gap-2 text-[11px] font-mono-tabular">
+                  <span
+                    className={
+                      enabled
+                        ? 'font-semibold text-[#059669] dark:text-[#2AD08E]'
+                        : 'text-[#526075] dark:text-[#8B9BB4]'
+                    }
+                  >
+                    {enabled ? 'ON' : 'OFF'}
+                  </span>
+                </div>
+                <p className="text-xs font-semibold text-[#0F172A] dark:text-[#F8FAFC] leading-snug">
+                  {item.label}
+                </p>
+                <p className="text-[11px] text-[#526075] dark:text-[#8B9BB4] leading-relaxed">
+                  {item.spec}
+                </p>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 pt-4 border-t border-[#DCE3EE] dark:border-[#1E293B]">
+          <div>
+            <span className="block text-xs text-[#526075] dark:text-[#8B9BB4] mb-1.5">
+              Target Antigravity Hardware Profile
+            </span>
+            <div className="grid grid-cols-3 gap-1 p-1 rounded-lg bg-[#EEF2F7] dark:bg-[#0B0F17]">
+              {(
+                [
+                  { id: 'laptop-16gb-cpu', label: '16GB Laptop CPU' },
+                  { id: 'apple-silicon', label: 'Apple Silicon' },
+                  { id: 'nvidia-cuda', label: 'NVIDIA CUDA' },
+                ] as Array<{ id: HardwareProfile; label: string }>
+              ).map((hw) => (
+                <button
+                  key={hw.id}
+                  type="button"
+                  onClick={() => onUpdateConfig({ ...config, hardwareProfile: hw.id })}
+                  className={`py-1.5 px-2 text-xs font-medium rounded-md cursor-pointer transition-colors ${
+                    config.hardwareProfile === hw.id
+                      ? 'bg-white dark:bg-[#1E293B] text-[#0F172A] dark:text-[#F8FAFC]'
+                      : 'text-[#526075] dark:text-[#8B9BB4]'
+                  }`}
+                >
+                  {hw.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <span className="block text-xs text-[#526075] dark:text-[#8B9BB4] mb-1.5">
+              Audio-Video Synchronization Engine
+            </span>
+            <div className="grid grid-cols-2 gap-1 p-1 rounded-lg bg-[#EEF2F7] dark:bg-[#0B0F17]">
+              {(
+                [
+                  { id: 'audio-first-per-beat', label: 'Audio-First Kokoro + WhisperX' },
+                  { id: 'bring-your-own-audio', label: 'Bring Your Own Audio + WhisperX' },
+                ] as Array<{ id: SyncMode; label: string }>
+              ).map((sm) => (
+                <button
+                  key={sm.id}
+                  type="button"
+                  onClick={() => onUpdateConfig({ ...config, syncMode: sm.id })}
+                  className={`py-1.5 px-2 text-xs font-medium rounded-md cursor-pointer transition-colors ${
+                    config.syncMode === sm.id
+                      ? 'bg-white dark:bg-[#1E293B] text-[#0F172A] dark:text-[#F8FAFC]'
+                      : 'text-[#526075] dark:text-[#8B9BB4]'
+                  }`}
+                >
+                  {sm.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Local Kokoro + 16 GB RAM Budget Strip */}
@@ -391,7 +555,8 @@ export function AntigravitySkillView({
           <div className="flex flex-wrap items-center gap-1 p-1 rounded-lg bg-[#EEF2F7] dark:bg-[#0B0F17] text-xs">
             {(
               [
-                { id: 'quality-gate', label: '18-Point Quality Gate' },
+                { id: 'sync-inspector', label: `Audio-First Sync (${syncAudit.totalCues} Cues)` },
+                { id: 'quality-gate', label: '22-Point Quality Gate' },
                 { id: 'shot-archetypes', label: 'Shot Archetypes (8)' },
                 { id: 'metaphors', label: '12-Domain Metaphors' },
                 { id: 'color-worlds', label: '12 Color Worlds' },
@@ -401,6 +566,7 @@ export function AntigravitySkillView({
               <button
                 key={tab.id}
                 type="button"
+                data-testid={`inspector-tab-${tab.id}`}
                 onClick={() => setTrainingTab(tab.id)}
                 className={`px-3 py-1.5 rounded-md font-medium whitespace-nowrap cursor-pointer transition-colors ${
                   trainingTab === tab.id
@@ -413,6 +579,91 @@ export function AntigravitySkillView({
             ))}
           </div>
         </div>
+
+        {trainingTab === 'sync-inspector' && (
+          <div data-testid="audio-sync-inspector" className="space-y-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pb-4 border-b border-[#DCE3EE] dark:border-[#1E293B]">
+              <div>
+                <p className="text-[11px] text-[#526075] dark:text-[#8B9BB4]">Max Frame Drift</p>
+                <p className="font-mono-tabular text-lg font-bold text-[#059669] dark:text-[#2AD08E]">
+                  {syncAudit.maxBoundaryDriftMs} ms
+                </p>
+                <p className="text-[11px] text-[#526075] dark:text-[#8B9BB4]">
+                  Target &lt;= 16.7ms (1 frame)
+                </p>
+              </div>
+              <div>
+                <p className="text-[11px] text-[#526075] dark:text-[#8B9BB4]">Locked Beats</p>
+                <p className="font-mono-tabular text-lg font-bold text-[#0F172A] dark:text-[#F8FAFC]">
+                  {syncAudit.beatCount} Beats
+                </p>
+                <p className="text-[11px] text-[#526075] dark:text-[#8B9BB4]">
+                  Exact silencedetect cuts
+                </p>
+              </div>
+              <div>
+                <p className="text-[11px] text-[#526075] dark:text-[#8B9BB4]">Aligned Spoken Words</p>
+                <p className="font-mono-tabular text-lg font-bold text-[#0F172A] dark:text-[#F8FAFC]">
+                  {syncAudit.totalWords}
+                </p>
+                <p className="text-[11px] text-[#526075] dark:text-[#8B9BB4]">
+                  Skips silence gaps cleanly
+                </p>
+              </div>
+              <div>
+                <p className="text-[11px] text-[#526075] dark:text-[#8B9BB4]">Word-Locked Visual & SFX Cues</p>
+                <p className="font-mono-tabular text-lg font-bold text-[#D97706] dark:text-[#F5B82E]">
+                  {syncAudit.totalCues} Cues
+                </p>
+                <p className="text-[11px] text-[#526075] dark:text-[#8B9BB4]">
+                  {syncAudit.allCuesResolved && syncAudit.monotonic ? '100% Monotonic Lock' : 'Check Sync'}
+                </p>
+              </div>
+            </div>
+
+            <div className="overflow-x-auto max-h-[380px] overflow-y-auto">
+              <table className="w-full text-left border-collapse text-xs">
+                <thead className="sticky top-0 bg-white dark:bg-[#111722]">
+                  <tr className="border-b border-[#DCE3EE] dark:border-[#1E293B] text-[#526075] dark:text-[#8B9BB4]">
+                    <th className="py-2 pr-4 font-medium">Beat</th>
+                    <th className="py-2 pr-4 font-medium">Spoken Trigger</th>
+                    <th className="py-2 pr-4 font-medium">Global Time</th>
+                    <th className="py-2 pr-4 font-medium">Local Frame</th>
+                    <th className="py-2 pr-4 font-medium">AE Motion Hit</th>
+                    <th className="py-2 font-medium">SFX Layer</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#DCE3EE] dark:divide-[#1E293B]">
+                  {LOCKED_WORD_TIMELINE.flatMap((beat, beatIdx) =>
+                    beat.cues.map((cue) => (
+                      <tr key={`${beat.beatId}-${cue.id}`} className="align-top">
+                        <td className="py-2.5 pr-4 font-mono-tabular font-semibold text-[#D97706] dark:text-[#F5B82E] whitespace-nowrap">
+                          {String(beatIdx + 1).padStart(2, '0')}
+                        </td>
+                        <td className="py-2.5 pr-4 font-mono-tabular font-semibold text-[#0F172A] dark:text-[#F8FAFC] whitespace-nowrap">
+                          “{cue.keyword}”
+                        </td>
+                        <td className="py-2.5 pr-4 font-mono-tabular text-[#526075] dark:text-[#8B9BB4] whitespace-nowrap">
+                          {cue.globalSec.toFixed(2)}s
+                        </td>
+                        <td className="py-2.5 pr-4 font-mono-tabular text-[#059669] dark:text-[#2AD08E] whitespace-nowrap">
+                          f{cue.localFrame}
+                        </td>
+                        <td className="py-2.5 pr-4 text-[#0F172A] dark:text-[#E2E8F0]">
+                          {cue.label}{' '}
+                          <span className="text-[#526075] dark:text-[#8B9BB4]">({cue.aeTwist})</span>
+                        </td>
+                        <td className="py-2.5 font-mono-tabular text-[#526075] dark:text-[#8B9BB4] whitespace-nowrap">
+                          {cue.sfxKind}
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
 
         {trainingTab === 'shot-archetypes' && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

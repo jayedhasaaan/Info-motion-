@@ -5,6 +5,7 @@ import { promisify } from 'node:util';
 import { bundle } from '@remotion/bundler';
 import { renderMedia, renderStill, selectComposition } from '@remotion/renderer';
 import { BANGLADESH_X_TIMELINE, TOTAL_FILM_FRAMES } from '../src/remotion/timingMath';
+import { getAllResolvedCues } from '../src/remotion/wordSyncTimeline';
 import { FILM_FPS } from '../src/remotion/theme';
 
 const execFileAsync = promisify(execFile);
@@ -19,12 +20,13 @@ const OUTPUT_MP4 = path.join(RENDER_DIR, 'bangladesh-x-demo.mp4');
 const OUTPUT_META = path.join(RENDER_DIR, 'bangladesh-x-demo.json');
 
 /**
- * Multi-Layer Pro-Editor Sound Design (48kHz Stereo Pure PCM):
+ * 6-Layer Pro-Editor Sound Design (48kHz Stereo Pure PCM):
  *  1. Stereo velvet transition whoosh + C5/E5 crystalline chime at all 11 scene cuts
  *  2. Crisp wooden UI pop/bloop (+0.35s after each beat entry when hero prop/callout lands)
- *  3. Heavy rubber-stamp / slam thud (80Hz->34Hz pitch drop + transient) at Scene 02 X-slash & Scene 03 MYTH stamp
- *  4. Harmonic cash/summit shimmer arpeggio at Scene 03 cash stacks, Scene 09 Taka fan, Scene 10 Month 3 summit
- *  5. Ultra-subtle -34dB warm documentary studio air bed so pauses never feel dead while Charon stays 100% foreground
+ *  3. Heavy rubber-stamp / slam thud (80Hz->34Hz pitch drop + transient) at Scene 02 & Scene 03 slams
+ *  4. Harmonic cash/summit shimmer arpeggio at payoff milestones
+ *  5. Ultra-subtle -34dB warm documentary studio air bed so pauses never feel dead
+ *  6. v7.0 Word-Locked Cue SFX anchored to all 36 resolved spoken word cues (impact, whoosh, chime, cloud-dive, vault)
  */
 async function buildMasterAudioWithSfx(
   voiceoverPath: string,
@@ -179,6 +181,66 @@ async function buildMasterAudioWithSfx(
     }
   }
 
+  // Layer 6 (v7.0): Word-Locked Cue SFX across all 36 spoken visual cues
+  const resolvedCues = getAllResolvedCues();
+  for (let c = 0; c < resolvedCues.length; c++) {
+    const cue = resolvedCues[c];
+    const startIdx = Math.max(0, Math.floor(cue.globalSec * sampleRate));
+    if (cue.sfxKind === 'cloud-dive') {
+      const len = Math.floor(0.52 * sampleRate);
+      let lp = 0;
+      for (let i = 0; i < len && startIdx + i < totalSamples; i++) {
+        const t = i / len;
+        const env = Math.sin(Math.PI * t) ** 1.6;
+        lp += (0.02 + 0.06 * Math.sin(Math.PI * t)) * (nextRand() - lp);
+        const swell = lp * env * 0.075;
+        sfxLeft[startIdx + i] += swell * (1 - t * 0.25);
+        sfxRight[startIdx + i] += swell * (0.75 + t * 0.25);
+      }
+    } else if (cue.sfxKind === 'vault') {
+      const len = Math.floor(0.24 * sampleRate);
+      let phase = 0;
+      for (let i = 0; i < len && startIdx + i < totalSamples; i++) {
+        const t = i / len;
+        phase += (2 * Math.PI * (140 + 220 * Math.exp(-t * 10))) / sampleRate;
+        const clank = (Math.sin(phase) * 0.65 + Math.sin(phase * 2.7) * 0.35) * Math.exp(-t * 9.5) * 0.065;
+        sfxLeft[startIdx + i] += clank;
+        sfxRight[startIdx + i] += clank;
+      }
+    } else if (cue.sfxKind === 'impact') {
+      const len = Math.floor(0.18 * sampleRate);
+      let phase = 0;
+      for (let i = 0; i < len && startIdx + i < totalSamples; i++) {
+        const t = i / len;
+        phase += (2 * Math.PI * (48 + 90 * Math.exp(-t * 16))) / sampleRate;
+        const hit = Math.sin(phase) * Math.min(1, i / 80) * Math.exp(-t * 12) * 0.078;
+        sfxLeft[startIdx + i] += hit;
+        sfxRight[startIdx + i] += hit;
+      }
+    } else if (cue.sfxKind === 'whoosh') {
+      const len = Math.floor(0.26 * sampleRate);
+      let lp = 0;
+      for (let i = 0; i < len && startIdx + i < totalSamples; i++) {
+        const t = i / len;
+        lp += (0.04 + 0.08 * Math.sin(Math.PI * t)) * (nextRand() - lp);
+        const w = lp * Math.sin(Math.PI * t) ** 1.5 * 0.052;
+        sfxLeft[startIdx + i] += w * 0.9;
+        sfxRight[startIdx + i] += w * 1.1;
+      }
+    } else {
+      // 'chime' crisp crystalline accent on spoken counter / keyword
+      const len = Math.floor(0.22 * sampleRate);
+      const freq = c % 2 === 0 ? 783.99 : 987.77; // G5 / B5 crisp tick
+      for (let i = 0; i < len && startIdx + i < totalSamples; i++) {
+        const t = i / len;
+        const env = Math.min(1, i / 90) * Math.exp(-t * 10.5);
+        const val = Math.sin(2 * Math.PI * freq * (i / sampleRate)) * env * 0.032;
+        sfxLeft[startIdx + i] += val * 0.94;
+        sfxRight[startIdx + i] += val * 1.06;
+      }
+    }
+  }
+
   // Write SFX track as temporary 16-bit PCM WAV
   const tmpSfxWav = path.join(RENDER_DIR, '.tmp-transition-sfx.wav');
   const dataBytes = totalSamples * 4; // stereo 16-bit
@@ -308,11 +370,25 @@ async function main() {
     await fs.unlink(path.join(RENDER_DIR, '.tmp-remotion-60fps-video.mp4')).catch(() => {});
 
     const stat = await fs.stat(OUTPUT_MP4);
+    const { stdout: probeOut } = await execFileAsync('ffprobe', [
+      '-v', 'error', '-show_entries', 'stream=codec_type,duration', '-of', 'json', OUTPUT_MP4,
+    ]);
+    const streams = (JSON.parse(probeOut).streams || []) as Array<{ codec_type: string; duration: string }>;
+    const vDur = Number(streams.find((s) => s.codec_type === 'video')?.duration || 0);
+    const aDur = Number(streams.find((s) => s.codec_type === 'audio')?.duration || 0);
+    const avDeltaSec = Math.abs(vDur - aDur);
+    console.log(
+      `[remotion-60fps] FFprobe A/V Sync Audit: video=${vDur.toFixed(3)}s audio=${aDur.toFixed(3)}s delta=${(avDeltaSec * 1000).toFixed(1)}ms`
+    );
+    if (avDeltaSec > 0.08) {
+      throw new Error(`A/V sync delta exceeded 80ms tolerance (${(avDeltaSec * 1000).toFixed(1)}ms)`);
+    }
+
     const metadata = {
       slug: 'bangladesh-x-demo',
       videoUrl: '/renders/bangladesh-x-demo.mp4',
       title: 'How to Make Real Internet Money from Bangladesh Using X (90-Day Plan)',
-      engine: 'Infographics Show Broadcast v6.0 · Remotion 60fps · Lineless Split-Shaded',
+      engine: 'Infographics Show × AE 2D+3D v7.0 · 60fps · Audio-First Word-Synced',
       fps: FILM_FPS,
       width: 1280,
       height: 720,
@@ -321,7 +397,8 @@ async function main() {
       durationSec: Number((TOTAL_FILM_FRAMES / FILM_FPS).toFixed(2)),
       fileSizeBytes: stat.size,
       hasVoiceover: true,
-      voiceName: 'Charon (Preserved Voiceover + Transition SFX)',
+      voiceName: 'Charon (Preserved Voiceover + 6-Layer Word-Locked SFX)',
+      avSyncDeltaMs: Number((avDeltaSec * 1000).toFixed(1)),
       renderedAt: new Date().toISOString(),
     };
 
@@ -408,9 +485,12 @@ async function main() {
   if (previewStills) {
     const stills = [
       { name: 'qa-scene01-dhaka-desk.png', frame: 210 },
+      { name: 'qa-scene01-cloud-dive.png', frame: 552 },
       { name: 'qa-scene03-piggy-vs-cash.png', frame: 2140 },
       { name: 'qa-scene05-storefront.png', frame: 3560 },
+      { name: 'qa-scene08-vault.png', frame: 5860 },
       { name: 'qa-scene09-plane-bank.png', frame: 6620 },
+      { name: 'qa-scene12-sunrise.png', frame: 9020 },
     ];
     for (const s of stills) {
       const outPath = path.join(RENDER_DIR, s.name);
@@ -525,7 +605,7 @@ async function main() {
     slug: 'bangladesh-x-demo',
     videoUrl: '/renders/bangladesh-x-demo.mp4',
     title: 'How to Make Real Internet Money from Bangladesh Using X (90-Day Plan)',
-    engine: 'Infographics Show Broadcast v6.0 · Remotion 60fps · Lineless Split-Shaded',
+    engine: 'Infographics Show × AE 2D+3D v7.0 · 60fps · Audio-First Word-Synced',
     fps: FILM_FPS,
     width: 1280,
     height: 720,
@@ -534,7 +614,7 @@ async function main() {
     durationSec: Number((TOTAL_FILM_FRAMES / FILM_FPS).toFixed(2)),
     fileSizeBytes: stat.size,
     hasVoiceover: true,
-    voiceName: 'Charon (Preserved Voiceover + Transition SFX)',
+    voiceName: 'Charon (Preserved Voiceover + 6-Layer Word-Locked SFX)',
     renderedAt: new Date().toISOString(),
   };
 

@@ -259,6 +259,13 @@ export const DEFAULT_SKILL_CONFIG: SkillConfig = {
   removeDeadAir: true,
   deadAirThresholdDb: -36,
   injectMotionOverlays: true,
+  enable3DCloudFlythrough: true,
+  enableSpeedRampBlur: true,
+  enable3DExtrudedProps: true,
+  enableWordLockedType: true,
+  enableTactileFinish: true,
+  hardwareProfile: 'laptop-16gb-cpu',
+  syncMode: 'audio-first-per-beat',
 };
 
 const INITIAL_SCENES: SceneBeat[] = [

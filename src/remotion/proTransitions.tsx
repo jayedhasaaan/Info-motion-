@@ -4,6 +4,7 @@ import type {
   TransitionPresentation,
   TransitionPresentationComponentProps,
 } from '@remotion/transitions';
+import { VolumetricCloudFlythrough } from './aeMotionPrimitives';
 
 // After Effects Graph Editor signature smooth S-curves (snappy whip mid-cut, silky ease settle)
 const AE_SMOOTH_CURVE = Easing.bezier(0.76, 0, 0.24, 1);
@@ -30,8 +31,9 @@ const ProWhipPanComponent: React.FC<TransitionPresentationComponentProps<WhipPan
     extrapolateRight: 'clamp',
   });
 
-  // Velocity bell curve peaks right at the seam (0.5) for authentic AE optical whip stretch
+  // Velocity-derivative speed-ramp stretch + subtle directional skew (zero heavy Gaussian blur!)
   const velocity = Math.sin(p * Math.PI);
+  const speedPeak = Math.pow(velocity, 1.45);
   const isHorizontal = passedProps.direction === 'left' || passedProps.direction === 'right';
   const sign =
     passedProps.direction === 'left' || passedProps.direction === 'up' ? -1 : 1;
@@ -50,20 +52,21 @@ const ProWhipPanComponent: React.FC<TransitionPresentationComponentProps<WhipPan
       : -sign * (1 - p) * 100.6
     : 0;
 
-  const scaleX = isHorizontal ? 1 + velocity * 0.072 : 1 - velocity * 0.02;
-  const scaleY = !isHorizontal ? 1 + velocity * 0.072 : 1 - velocity * 0.02;
-  const streakColor = passedProps.streakColor ?? 'rgba(255, 248, 226, 0.58)';
+  const scaleX = isHorizontal ? 1 + speedPeak * 0.115 : 1 - speedPeak * 0.025;
+  const scaleY = !isHorizontal ? 1 + speedPeak * 0.115 : 1 - speedPeak * 0.025;
+  const skewX = isHorizontal ? sign * speedPeak * -4.2 : 0;
+  const streakColor = passedProps.streakColor ?? 'rgba(255, 248, 226, 0.66)';
 
   return (
     <AbsoluteFill
       style={{
-        transform: `translate3d(${tx.toFixed(3)}%, ${ty.toFixed(3)}%, 0) scale(${scaleX.toFixed(4)}, ${scaleY.toFixed(4)})`,
+        transform: `translate3d(${tx.toFixed(3)}%, ${ty.toFixed(3)}%, 0) skewX(${skewX.toFixed(2)}deg) scale(${scaleX.toFixed(4)}, ${scaleY.toFixed(4)})`,
         willChange: 'transform',
       }}
     >
       {children}
-      {/* Crisp subtle anime/editorial speed-lines at peak whip velocity (zero blur overhead) */}
-      {presentationDirection === 'entering' && velocity > 0.25 && (
+      {/* Velocity-derivative directional motion-blur smear streaks at peak whip velocity */}
+      {velocity > 0.2 && (
         <svg
           viewBox="0 0 1280 720"
           style={{
@@ -72,21 +75,23 @@ const ProWhipPanComponent: React.FC<TransitionPresentationComponentProps<WhipPan
             width: '100%',
             height: '100%',
             pointerEvents: 'none',
-            opacity: (velocity - 0.25) * 0.52,
+            opacity: ((velocity - 0.2) * 0.62).toFixed(3),
           }}
         >
           {isHorizontal ? (
             <>
-              <rect x={80} y={118} width={340} height={4} rx={2} fill={streakColor} />
-              <rect x={760} y={248} width={420} height={3} rx={1.5} fill={streakColor} />
-              <rect x={220} y={512} width={380} height={4} rx={2} fill={streakColor} />
-              <rect x={880} y={604} width={280} height={3} rx={1.5} fill={streakColor} />
+              <rect x={40} y={96} width={440} height={5} rx={2.5} fill={streakColor} />
+              <rect x={680} y={214} width={520} height={3.5} rx={1.75} fill={streakColor} />
+              <rect x={160} y={362} width={640} height={4} rx={2} fill={streakColor} opacity={0.45} />
+              <rect x={220} y={512} width={420} height={4.5} rx={2.25} fill={streakColor} />
+              <rect x={820} y={610} width={340} height={3} rx={1.5} fill={streakColor} />
             </>
           ) : (
             <>
-              <rect x={160} y={60} width={4} height={260} rx={2} fill={streakColor} />
-              <rect x={540} y={320} width={3} height={290} rx={1.5} fill={streakColor} />
-              <rect x={1080} y={140} width={4} height={280} rx={2} fill={streakColor} />
+              <rect x={140} y={40} width={5} height={320} rx={2.5} fill={streakColor} />
+              <rect x={540} y={260} width={3.5} height={360} rx={1.75} fill={streakColor} />
+              <rect x={840} y={80} width={4} height={310} rx={2} fill={streakColor} opacity={0.45} />
+              <rect x={1100} y={140} width={4.5} height={340} rx={2.25} fill={streakColor} />
             </>
           )}
         </svg>
@@ -556,5 +561,172 @@ export const proLiquidWaveSweep = (
   props: LiquidWaveProps = {}
 ): TransitionPresentation<LiquidWaveProps> => ({
   component: ProLiquidWaveComponent,
+  props,
+});
+
+// ============================================================================
+// 7. PRO 3D VOLUMETRIC CLOUD FLY-THROUGH (Viral AE Z-Depth Cloud Dive!)
+// ============================================================================
+type CloudFlythroughProps = {
+  tint?: string;
+  shadeTint?: string;
+  mistColor?: string;
+};
+
+const ProCloudFlythroughComponent: React.FC<
+  TransitionPresentationComponentProps<CloudFlythroughProps>
+> = ({ children, presentationDirection, presentationProgress, passedProps }) => {
+  const p = interpolate(presentationProgress, [0, 1], [0, 1], {
+    easing: AE_CAMERA_DIVE,
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+
+  if (presentationDirection === 'exiting') {
+    const scale = interpolate(p, [0, 1], [1, 1.32]);
+    const opacity = interpolate(p, [0.35, 0.78], [1, 0], {
+      extrapolateLeft: 'clamp',
+      extrapolateRight: 'clamp',
+    });
+    return (
+      <AbsoluteFill
+        style={{
+          transform: `scale(${scale.toFixed(4)})`,
+          opacity,
+        }}
+      >
+        {children}
+      </AbsoluteFill>
+    );
+  }
+
+  const scale = interpolate(p, [0, 1], [0.84, 1]);
+  const opacity = interpolate(p, [0.22, 0.65], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+
+  return (
+    <AbsoluteFill>
+      <AbsoluteFill
+        style={{
+          transform: `scale(${scale.toFixed(4)})`,
+          opacity,
+        }}
+      >
+        {children}
+      </AbsoluteFill>
+      <VolumetricCloudFlythrough
+        progress={p}
+        tint={passedProps.tint ?? '#F8FBFF'}
+        shadeTint={passedProps.shadeTint ?? '#B8D4EA'}
+        mistColor={passedProps.mistColor ?? 'rgba(226, 240, 255, 0.34)'}
+      />
+    </AbsoluteFill>
+  );
+};
+
+export const proCloudFlythroughTransition = (
+  props: CloudFlythroughProps = {}
+): TransitionPresentation<CloudFlythroughProps> => ({
+  component: ProCloudFlythroughComponent,
+  props,
+});
+
+// ============================================================================
+// 8. PRO MATCH-CUT MORPH (AE Shared-Anchor Speed-Ramp Rotational Morph)
+// ============================================================================
+type MatchCutMorphProps = {
+  accentColor?: string;
+  direction?: 'cw' | 'ccw';
+};
+
+const ProMatchCutMorphComponent: React.FC<
+  TransitionPresentationComponentProps<MatchCutMorphProps>
+> = ({ children, presentationDirection, presentationProgress, passedProps }) => {
+  const accent = passedProps.accentColor ?? '#FFD166';
+  const sign = passedProps.direction === 'ccw' ? -1 : 1;
+  const p = interpolate(presentationProgress, [0, 1], [0, 1], {
+    easing: AE_SMOOTH_CURVE,
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+  const speedPeak = Math.sin(p * Math.PI);
+
+  if (presentationDirection === 'exiting') {
+    const rot = sign * interpolate(p, [0, 1], [0, 16]);
+    const scale = interpolate(p, [0, 1], [1, 1.24]);
+    const opacity = interpolate(p, [0.32, 0.8], [1, 0], {
+      extrapolateLeft: 'clamp',
+      extrapolateRight: 'clamp',
+    });
+    return (
+      <AbsoluteFill
+        style={{
+          transform: `scale(${scale.toFixed(4)}) rotate(${rot.toFixed(2)}deg)`,
+          opacity,
+        }}
+      >
+        {children}
+      </AbsoluteFill>
+    );
+  }
+
+  const rot = sign * interpolate(p, [0, 1], [-16, 0]);
+  const scale = interpolate(p, [0, 1], [0.84, 1]);
+  const opacity = interpolate(p, [0.18, 0.66], [0, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+
+  return (
+    <AbsoluteFill>
+      <AbsoluteFill
+        style={{
+          transform: `scale(${scale.toFixed(4)}) rotate(${rot.toFixed(2)}deg)`,
+          opacity,
+        }}
+      >
+        {children}
+      </AbsoluteFill>
+      {speedPeak > 0.08 && (
+        <svg
+          viewBox="0 0 1280 720"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            pointerEvents: 'none',
+            opacity: (speedPeak * 0.72).toFixed(3),
+          }}
+        >
+          <g transform={`translate(640, 360) rotate(${(sign * p * 180).toFixed(1)})`}>
+            <circle
+              r={(120 + speedPeak * 280).toFixed(1)}
+              fill="none"
+              stroke={accent}
+              strokeWidth={5}
+              strokeDasharray="48 34"
+            />
+            <circle
+              r={(74 + speedPeak * 150).toFixed(1)}
+              fill="none"
+              stroke="#FFFFFF"
+              strokeWidth={2.5}
+              strokeDasharray="18 22"
+              opacity={0.7}
+            />
+          </g>
+        </svg>
+      )}
+    </AbsoluteFill>
+  );
+};
+
+export const proMatchCutMorph = (
+  props: MatchCutMorphProps = {}
+): TransitionPresentation<MatchCutMorphProps> => ({
+  component: ProMatchCutMorphComponent,
   props,
 });

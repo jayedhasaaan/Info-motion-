@@ -6,13 +6,14 @@ import {
   FONT_CONDENSED,
   ImpactBurst,
   KineticSubtitleBar,
-  LeaderCallout,
   SPRING_POP,
   SPRING_SMOOTH,
   SplitBuilding,
   getCameraTransform,
   getImpactShake,
 } from '../theme';
+import { Camera3DRig, GlassLeaderCallout } from '../aeMotionPrimitives';
+import { getWordCueFrame } from '../wordSyncTimeline';
 import type { WorldSceneProps } from './ActOneScenes';
 
 // ============================================================================
@@ -26,20 +27,25 @@ export const Scene05ProfileStorefront: React.FC<WorldSceneProps> = ({
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const irisP = interpolate(frame, [162, 228], [0, 1], {
+  const diaryCue = getWordCueFrame(beat.id, 'diary-cross', 110);
+  const irisCue = getWordCueFrame(beat.id, 'storefront-iris', 196);
+  const trophyCue = getWordCueFrame(beat.id, 'pinned-trophy', 540);
+
+  const irisP = interpolate(frame, [irisCue, irisCue + 64], [0, 1], {
     easing: Easing.bezier(0.76, 0, 0.24, 1),
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
 
-  const diaryShake = frame > 95 && frame < 155 ? Math.sin(frame * 1.4) * 5 : 0;
-  const awningUnfurl = spring({ frame: Math.max(0, frame - 218), fps, config: SPRING_POP });
-  const signPop = spring({ frame: Math.max(0, frame - 255), fps, config: SPRING_POP });
-  const trophyPop = spring({ frame: Math.max(0, frame - 320), fps, config: SPRING_POP });
+  const diaryShake = frame > diaryCue && frame < irisCue ? Math.sin(frame * 1.4) * 5 : 0;
+  const awningUnfurl = spring({ frame: Math.max(0, frame - (irisCue + 46)), fps, config: SPRING_POP });
+  const signPop = spring({ frame: Math.max(0, frame - (irisCue + 78)), fps, config: SPRING_POP });
+  const trophyPop = spring({ frame: Math.max(0, frame - Math.max(irisCue + 120, trophyCue - 24)), fps, config: SPRING_POP });
   const shimmerX = ((frame * 4.5) % 480) - 120;
 
   return (
     <AbsoluteFill style={{ backgroundColor: '#241D1A' }}>
+      <Camera3DRig durationInFrames={durationInFrames} mode="orbital-push" intensity={0.75}>
       <svg width={1280} height={720} viewBox="0 0 1280 720" style={{ display: 'block' }}>
         <defs>
           <linearGradient id="avenueSky6" x1="0" y1="0" x2="0" y2="1">
@@ -76,7 +82,7 @@ export const Scene05ProfileStorefront: React.FC<WorldSceneProps> = ({
               <text x={14} y={10} textAnchor="middle" fontFamily={FONT_CONDENSED} fontWeight={800} fontSize={36} fill="#EFE2CE" letterSpacing="0.14em">
                 DIARY
               </text>
-              {frame > 95 && (
+              {frame >= diaryCue && (
                 <g opacity={0.95}>
                   <line x1={-114} y1={-106} x2={114} y2={106} stroke="#E63946" strokeWidth={18} strokeLinecap="round" />
                   <line x1={114} y1={-106} x2={-114} y2={106} stroke="#E63946" strokeWidth={18} strokeLinecap="round" />
@@ -212,17 +218,17 @@ export const Scene05ProfileStorefront: React.FC<WorldSceneProps> = ({
                 </g>
               </g>
 
-              {/* Crisp Infographics Show Leader-Line Callout Pointing to Pinned Proof Trophy */}
-              <LeaderCallout
+              {/* Frosted-Glass AE Leader Callout Pointing to Pinned Proof Trophy */}
+              <GlassLeaderCallout
                 targetX={568}
                 targetY={436}
-                elbowX={318}
-                elbowY={210}
-                endX={110}
+                elbowX={348}
+                elbowY={248}
+                endX={116}
                 label="PINNED PROOF"
                 sublabel="VISIBLE CASE STUDY"
                 accent="#FFD166"
-                delayFrames={328}
+                delayFrames={Math.max(irisCue + 128, trophyCue - 12)}
               />
 
               <FloatingCallout
@@ -233,14 +239,16 @@ export const Scene05ProfileStorefront: React.FC<WorldSceneProps> = ({
                 size={52}
                 fill="#FFFFFF"
                 accent="#FFD166"
-                delayFrames={230}
+                delayFrames={irisCue + 52}
               />
             </g>
           </g>
         )}
       </svg>
+      </Camera3DRig>
 
       <KineticSubtitleBar
+        beatId={beat.id}
         narration={beat.narration}
         durationInFrames={durationInFrames}
         enabled={subtitlesEnabled}
@@ -271,9 +279,13 @@ export const Scene06ProofEngine: React.FC<WorldSceneProps> = ({
   const tornRot = interpolate(pageCycle, [0, 1], [0, 52]);
   const tornOp = interpolate(pageCycle, [0, 0.72, 1], [1, 0.9, 0]);
 
-  const crate1 = spring({ frame: Math.max(0, frame - 85), fps, config: SPRING_POP });
-  const crate2 = spring({ frame: Math.max(0, frame - 200), fps, config: SPRING_POP });
-  const crate3 = spring({ frame: Math.max(0, frame - 325), fps, config: SPRING_POP });
+  const crate1Cue = getWordCueFrame(beat.id, 'crate-teardown', 260);
+  const crate2Cue = getWordCueFrame(beat.id, 'crate-redesign', 355);
+  const crate3Cue = getWordCueFrame(beat.id, 'crate-clips', 475);
+
+  const crate1 = spring({ frame: Math.max(0, frame - crate1Cue), fps, config: SPRING_POP });
+  const crate2 = spring({ frame: Math.max(0, frame - crate2Cue), fps, config: SPRING_POP });
+  const crate3 = spring({ frame: Math.max(0, frame - crate3Cue), fps, config: SPRING_POP });
 
   // Authentic Split-Shaded 3D Wooden Shipping Crate (NO cartoon outlines!)
   const renderIsometricCrate = (x: number, y: number, label: string, pop: number) => (
@@ -382,6 +394,7 @@ export const Scene06ProofEngine: React.FC<WorldSceneProps> = ({
       </svg>
 
       <KineticSubtitleBar
+        beatId={beat.id}
         narration={beat.narration}
         durationInFrames={durationInFrames}
         enabled={subtitlesEnabled}
@@ -400,9 +413,12 @@ export const Scene07SniperRadar: React.FC<WorldSceneProps> = ({
 }) => {
   const frame = useCurrentFrame();
 
+  const radarCue = getWordCueFrame(beat.id, 'forty-radar', 280);
+  const fiftyCue = getWordCueFrame(beat.id, 'fifty-replies', 520);
+
   const beamAngle = -24 + Math.sin(frame * 0.042) * 16;
   const replyCount = Math.round(
-    interpolate(frame, [35, durationInFrames - 85], [0, 50], {
+    interpolate(frame, [Math.max(40, radarCue - 30), Math.min(durationInFrames - 40, fiftyCue + 40)], [0, 50], {
       extrapolateLeft: 'clamp',
       extrapolateRight: 'clamp',
     })
@@ -412,6 +428,7 @@ export const Scene07SniperRadar: React.FC<WorldSceneProps> = ({
 
   return (
     <AbsoluteFill style={{ backgroundColor: '#0A162B' }}>
+      <Camera3DRig durationInFrames={durationInFrames} mode="dramatic-tilt" intensity={0.8}>
       <svg width={1280} height={720} viewBox="0 0 1280 720" style={{ display: 'block' }}>
         <defs>
           <linearGradient id="oceanNight6" x1="0" y1="0" x2="0" y2="1">
@@ -509,6 +526,18 @@ export const Scene07SniperRadar: React.FC<WorldSceneProps> = ({
             />
           </g>
 
+          <GlassLeaderCallout
+            targetX={980}
+            targetY={260}
+            elbowX={890}
+            elbowY={210}
+            endX={660}
+            label="50 HIRING FOUNDERS"
+            sublabel="US & EU STARTUP TIMELINES"
+            accent="#2AD08E"
+            delayFrames={Math.max(120, fiftyCue - 60)}
+          />
+
           <FloatingCallout
             x={640}
             y={104}
@@ -521,8 +550,10 @@ export const Scene07SniperRadar: React.FC<WorldSceneProps> = ({
           />
         </g>
       </svg>
+      </Camera3DRig>
 
       <KineticSubtitleBar
+        beatId={beat.id}
         narration={beat.narration}
         durationInFrames={durationInFrames}
         enabled={subtitlesEnabled}
@@ -542,7 +573,12 @@ export const Scene08ColdDm: React.FC<WorldSceneProps> = ({
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const tossP = interpolate(frame, [24, 128], [0, 1], {
+  const begCue = getWordCueFrame(beat.id, 'beg-trash', 36);
+  const sampleCue = getWordCueFrame(beat.id, 'sample-envelope', 250);
+  const vaultCue = getWordCueFrame(beat.id, 'vault-unlock', 585);
+  const keyStart = Math.max(sampleCue + 80, vaultCue - 110);
+
+  const tossP = interpolate(frame, [Math.max(12, begCue - 12), begCue + 96], [0, 1], {
     easing: Easing.out(Easing.quad),
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
@@ -551,18 +587,18 @@ export const Scene08ColdDm: React.FC<WorldSceneProps> = ({
   const ballY = interpolate(tossP, [0, 1], [228, 444]) - Math.sin(tossP * Math.PI) * 185;
   const ballRot = tossP * 420;
 
-  const envPop = spring({ frame: Math.max(0, frame - 205), fps, config: SPRING_POP });
-  const keyFlight = interpolate(frame, [315, 415], [0, 1], {
+  const envPop = spring({ frame: Math.max(0, frame - sampleCue), fps, config: SPRING_POP });
+  const keyFlight = interpolate(frame, [keyStart, vaultCue - 14], [0, 1], {
     easing: Easing.bezier(0.76, 0, 0.24, 1),
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
-  const vaultOpen = spring({ frame: Math.max(0, frame - 438), fps, config: SPRING_SMOOTH });
-  const wheelSpin = interpolate(frame, [406, 468], [0, 210], {
+  const vaultOpen = spring({ frame: Math.max(0, frame - vaultCue), fps, config: SPRING_SMOOTH });
+  const wheelSpin = interpolate(frame, [vaultCue - 32, vaultCue + 30], [0, 210], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
-  const shake = getImpactShake(frame, 438, 8);
+  const shake = getImpactShake(frame, vaultCue, 10);
 
   return (
     <AbsoluteFill style={{ backgroundColor: '#DCE8F2' }}>
@@ -640,7 +676,7 @@ export const Scene08ColdDm: React.FC<WorldSceneProps> = ({
             </g>
 
             {/* Flying Brass Master Key */}
-            {frame >= 315 && (
+            {frame >= keyStart && (
               <g transform={`translate(${interpolate(keyFlight, [0, 1], [656, 960]).toFixed(1)}, ${interpolate(keyFlight, [0, 0.5, 1], [372, 286, 392]).toFixed(1)})`}>
                 <circle cx={-34} cy={0} r={18} fill="none" stroke="#D99B26" strokeWidth={10} />
                 <circle cx={-34} cy={0} r={18} fill="none" stroke="#FFD166" strokeWidth={4} />
@@ -683,7 +719,7 @@ export const Scene08ColdDm: React.FC<WorldSceneProps> = ({
                 </g>
               </g>
             </g>
-            <ImpactBurst x={1010} y={392} triggerFrame={438} color="#FFD166" secondaryColor="#2AD08E" radius={172} />
+            <ImpactBurst x={1010} y={392} triggerFrame={vaultCue} color="#FFD166" secondaryColor="#2AD08E" radius={172} />
 
             <FloatingCallout
               x={640}
@@ -693,7 +729,7 @@ export const Scene08ColdDm: React.FC<WorldSceneProps> = ({
               size={54}
               fill="#142033"
               accent="#1FB57A"
-              delayFrames={210}
+              delayFrames={sampleCue}
               darkBackdrop={false}
             />
           </g>
@@ -701,6 +737,7 @@ export const Scene08ColdDm: React.FC<WorldSceneProps> = ({
       </svg>
 
       <KineticSubtitleBar
+        beatId={beat.id}
         narration={beat.narration}
         durationInFrames={durationInFrames}
         enabled={subtitlesEnabled}
