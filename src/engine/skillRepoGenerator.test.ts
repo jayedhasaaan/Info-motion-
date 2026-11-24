@@ -7,7 +7,7 @@ import {
 } from '../data/presets';
 import { generateSkillRepoFiles } from './skillRepoGenerator';
 
-test('generateSkillRepoFiles produces a 29-file v5.0.0 self-contained Antigravity Infographics Show Ultra repo', () => {
+test('generateSkillRepoFiles produces a 29-file v6.0.0 self-contained Antigravity Infographics Show Broadcast repo', () => {
   const config = {
     ...DEFAULT_SKILL_CONFIG,
     primaryVoiceId: 'bm_george',
@@ -48,14 +48,14 @@ test('generateSkillRepoFiles produces a 29-file v5.0.0 self-contained Antigravit
   assert.ok(paths.includes('templates/active_blueprint.json'));
 
   const pkg = JSON.parse(files.find((f) => f.path === 'package.json')!.content);
-  assert.equal(pkg.version, '5.0.0');
+  assert.equal(pkg.version, '6.0.0');
 
   const skillMd = files.find((f) => f.path === 'SKILL.md')!;
   assert.ok(skillMd.content.includes('MANDATORY GATE 1'), 'SKILL.md must enforce user review gate before production');
   assert.ok(skillMd.content.includes('remotion-dev/skills'), 'SKILL.md incorporates remotion-dev/skills 60fps engine');
   assert.ok(skillMd.content.includes('audit_infographics_quality.mjs'), 'SKILL.md enforces executable quality gate');
-  assert.ok(skillMd.content.includes('pro-editor-micro-craft.md'), 'SKILL.md links v5.0 pro-editor micro-craft guide');
-  assert.ok(skillMd.content.includes('proPrimitives.tsx'), 'SKILL.md links v5.0 cel-shaded primitives module');
+  assert.ok(skillMd.content.includes('pro-editor-micro-craft.md'), 'SKILL.md links v6.0 pro-editor micro-craft guide');
+  assert.ok(skillMd.content.includes('proPrimitives.tsx'), 'SKILL.md links v6.0 lineless split-shaded primitives module');
   assert.ok(skillMd.content.includes('0.7*bm_george + 0.3*af_heart'));
   assert.ok(skillMd.content.includes('Default `dark`'));
   assert.ok(skillMd.content.includes('Default `off`'));
@@ -64,6 +64,8 @@ test('generateSkillRepoFiles produces a 29-file v5.0.0 self-contained Antigravit
   const shippedPrimitives = files.find((f) => f.path === 'src/remotion/proPrimitives.tsx')!;
   assert.ok(shippedPrimitives.content.includes('ImpactBurst'), 'ships ImpactBurst primitive');
   assert.ok(shippedPrimitives.content.includes('ChapterSliver'), 'ships ChapterSliver primitive');
+  assert.ok(shippedPrimitives.content.includes('LeaderCallout'), 'ships LeaderCallout infographic pointer primitive');
+  assert.ok(shippedPrimitives.content.includes('SplitBuilding'), 'ships SplitBuilding architectural primitive');
   assert.ok(shippedPrimitives.content.includes('#2AD08E'), 'ships semantic emerald power-word captions');
 
   const remotionScript = files.find((f) => f.path === 'scripts/render_remotion_60fps.mjs')!;

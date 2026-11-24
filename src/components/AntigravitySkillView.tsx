@@ -70,14 +70,15 @@ export function AntigravitySkillView({
       <div className="flex flex-wrap items-end justify-between gap-4 pb-6 border-b border-[#DCE3EE] dark:border-[#1E293B]">
         <div>
           <p className="text-xs font-medium text-[#D97706] dark:text-[#F5B82E] mb-1">
-            Antigravity IDE Ultra v5.0 · {files.length} Self-Contained Files
+            Antigravity IDE Broadcast v6.0 · {files.length} Self-Contained Files
           </p>
           <h1 className="font-editorial text-2xl sm:text-3xl font-extrabold text-[#0F172A] dark:text-[#F8FAFC]">
-            Infographics Show Ultra — Antigravity Skill & Local Engine
+            Infographics Show Broadcast — Antigravity Skill & Local Engine
           </h1>
           <p className="mt-1.5 text-xs sm:text-sm text-[#526075] dark:text-[#8B9BB4] max-w-2xl">
-            Ships the 12-Domain Creative Playbook, 8 Shot-Composition Archetypes, cel-shaded{' '}
-            <code>proPrimitives.tsx</code>, 6 AE-Bezier Remotion transitions, executable 18-Point
+            Ships the lineless split-shaded <code>proPrimitives.tsx</code> (
+            <code>LeaderCallout</code>, <code>SplitBuilding</code>), 12-Domain Creative Playbook, 8
+            Shot-Composition Archetypes, 6 AE-Bezier Remotion transitions, executable 18-Point
             Pro-Editor Quality Gate, and 5-layer SFX + Kokoro-82M pipeline.
           </p>
         </div>

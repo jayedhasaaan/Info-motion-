@@ -112,7 +112,9 @@ export function DirectorStudioView({
   const [renderStage, setRenderStage] = useState('');
   const [renderError, setRenderError] = useState<string | null>(null);
   const [videoCacheBust, setVideoCacheBust] = useState(0);
+  const [mp4ActiveBeatIdx, setMp4ActiveBeatIdx] = useState(0);
 
+  const mp4VideoRef = useRef<HTMLVideoElement | null>(null);
   const stageHostRef = useRef<HTMLDivElement | null>(null);
   const remotionPlayerRef = useRef<PlayerRef | null>(null);
   const playheadRef = useRef<number>(0);
@@ -1130,11 +1132,7 @@ export function DirectorStudioView({
             <div className="flex items-center gap-2">
               {renderedVideo && renderStatus !== 'rendering' && (
                 <a
-                  href={
-                    videoCacheBust
-                      ? `${renderedVideo.videoUrl}?v=${videoCacheBust}`
-                      : renderedVideo.videoUrl
-                  }
+                  href={`${renderedVideo.videoUrl}?v=${encodeURIComponent(String(videoCacheBust || renderedVideo.renderedAt))}`}
                   download={`${blueprint.id || 'sovereign-motion-film'}.mp4`}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-[#DCE3EE] dark:border-[#222E42] text-[#0F172A] dark:text-[#F8FAFC] hover:border-[#D97706] dark:hover:border-[#F5B82E] transition-colors whitespace-nowrap"
                 >
@@ -1197,13 +1195,22 @@ export function DirectorStudioView({
                 <>
                   <div className="flex justify-center bg-[#060910] rounded-lg overflow-hidden border border-[#1E293B]">
                     <video
+                      ref={mp4VideoRef}
                       key={videoCacheBust || renderedVideo.renderedAt}
                       data-testid="rendered-mp4-player"
-                      src={
-                        videoCacheBust
-                          ? `${renderedVideo.videoUrl}?v=${videoCacheBust}`
-                          : renderedVideo.videoUrl
-                      }
+                      src={`${renderedVideo.videoUrl}?v=${encodeURIComponent(String(videoCacheBust || renderedVideo.renderedAt))}`}
+                      onTimeUpdate={(e) => {
+                        const t = e.currentTarget.currentTime;
+                        const slots = BANGLADESH_X_TIMELINE.slots;
+                        const found = slots.findIndex(
+                          (slot, idx) =>
+                            t >= slot.beat.startSec &&
+                            (idx === slots.length - 1 || t < slots[idx + 1].beat.startSec)
+                        );
+                        if (found !== -1 && found !== mp4ActiveBeatIdx) {
+                          setMp4ActiveBeatIdx(found);
+                        }
+                      }}
                       controls
                       playsInline
                       preload="metadata"
@@ -1232,11 +1239,96 @@ export function DirectorStudioView({
                       </span>
                     </div>
                     <span className="text-[11px] text-[#059669] dark:text-[#2AD08E] font-medium">
-                      {renderedVideo.fps >= 60
-                        ? 'Infographics Show Ultra · 60fps · 6 Pro Smooth Transitions'
-                        : 'HD H.264/AAC'}
+                      {renderedVideo.engine ||
+                        'Infographics Show Broadcast v6.0 · Lineless Split-Shaded · 60fps'}
                     </span>
                   </div>
+
+                  {isRemotionFlagship && (
+                    <div className="space-y-3 pt-3 border-t border-[#DCE3EE] dark:border-[#1E293B]">
+                      <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+                        <span className="font-semibold text-[#0F172A] dark:text-[#F8FAFC]">
+                          12-Scene Broadcast NLE Storyboard Timeline
+                        </span>
+                        <span className="text-[11px] text-[#526075] dark:text-[#8B9BB4]">
+                          Click any beat to jump the 60fps MP4 directly to that scene
+                        </span>
+                      </div>
+
+                      <div
+                        data-testid="mp4-nle-timeline"
+                        className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2"
+                      >
+                        {BANGLADESH_X_TIMELINE.slots.map((slot, idx) => {
+                          const worldList = Object.values(INFOGRAPHICS_WORLD_PALETTES);
+                          const world = worldList[idx % worldList.length];
+                          const isActive = mp4ActiveBeatIdx === idx;
+                          return (
+                            <button
+                              key={slot.beat.id}
+                              type="button"
+                              data-testid={`nle-beat-${idx + 1}`}
+                              onClick={() => {
+                                setMp4ActiveBeatIdx(idx);
+                                if (mp4VideoRef.current) {
+                                  mp4VideoRef.current.currentTime = slot.beat.startSec + 0.05;
+                                  void mp4VideoRef.current.play().catch(() => {});
+                                }
+                              }}
+                              className={`text-left px-3 py-2 rounded-lg border text-xs transition-colors cursor-pointer relative overflow-hidden ${
+                                isActive
+                                  ? 'border-[#D97706] dark:border-[#F5B82E] bg-[#F7F9FC] dark:bg-[#182132] text-[#0F172A] dark:text-[#F8FAFC]'
+                                  : 'border-[#DCE3EE] dark:border-[#1E293B] text-[#526075] dark:text-[#8B9BB4] hover:border-[#94A3B8] dark:hover:border-[#334155] hover:text-[#0F172A] dark:hover:text-[#F8FAFC]'
+                              }`}
+                            >
+                              <div
+                                className="absolute left-0 top-0 bottom-0 w-1"
+                                style={{ backgroundColor: world.primary }}
+                                aria-hidden="true"
+                              />
+                              <div className="pl-1.5">
+                                <div className="font-mono-tabular text-[10px] text-[#D97706] dark:text-[#F5B82E] flex items-center justify-between gap-1">
+                                  <span>
+                                    {String(idx + 1).padStart(2, '0')} ·{' '}
+                                    {formatTimecode(slot.beat.startSec)}
+                                  </span>
+                                  <span className="text-[#64748B] dark:text-[#94A3B8] truncate">
+                                    {TRANSITION_LABELS[idx] ?? 'Cut'}
+                                  </span>
+                                </div>
+                                <div className="font-medium truncate mt-0.5">
+                                  {slot.beat.headline}
+                                </div>
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {BANGLADESH_X_TIMELINE.slots[mp4ActiveBeatIdx] && (
+                        <div className="rounded-lg bg-[#F7F9FC] dark:bg-[#0B0F17] border border-[#DCE3EE] dark:border-[#1E293B] px-4 py-3 grid grid-cols-1 md:grid-cols-[1.5fr_1fr] gap-3 text-xs">
+                          <div>
+                            <p className="font-semibold text-[#0F172A] dark:text-[#F8FAFC] mb-0.5">
+                              Scene {String(mp4ActiveBeatIdx + 1).padStart(2, '0')} ·{' '}
+                              {BANGLADESH_X_TIMELINE.slots[mp4ActiveBeatIdx].beat.headline}
+                            </p>
+                            <p className="text-[#526075] dark:text-[#8B9BB4] leading-relaxed">
+                              “{BANGLADESH_X_TIMELINE.slots[mp4ActiveBeatIdx].beat.narration}”
+                            </p>
+                          </div>
+                          <div className="md:border-l md:border-[#DCE3EE] md:dark:border-[#1E293B] md:pl-3">
+                            <p className="font-semibold text-[#D97706] dark:text-[#F5B82E] mb-0.5">
+                              AE Transition · {TRANSITION_LABELS[mp4ActiveBeatIdx] ?? 'Smooth Cut'}
+                            </p>
+                            <p className="text-[#526075] dark:text-[#8B9BB4] leading-relaxed">
+                              Lineless split-shaded 2.5D architectural set with animated leader
+                              callouts, 45° cast shadows, and 5-layer stereo SFX.
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </>
               ) : (
                 renderStatus !== 'rendering' && (
@@ -1420,15 +1512,16 @@ export function DirectorStudioView({
         <aside className="rounded-xl bg-white dark:bg-[#111722] border border-[#DCE3EE] dark:border-[#1E293B] p-5 sm:p-6 space-y-5">
           <div>
             <p className="text-xs font-medium text-[#D97706] dark:text-[#F5B82E] mb-1">
-              Antigravity IDE Ultra v5.0 · 29 Self-Contained Files
+              Antigravity IDE Broadcast v6.0 · 29 Self-Contained Files
             </p>
             <h2 className="font-editorial text-xl font-extrabold text-[#0F172A] dark:text-[#F8FAFC]">
-              Consistent 60fps Quality Every Time
+              Consistent 60fps Broadcast Quality
             </h2>
             <p className="mt-1.5 text-xs text-[#526075] dark:text-[#8B9BB4] leading-relaxed">
-              Ships the 12-Domain Playbook, 8 Shot Archetypes, cel-shaded{' '}
-              <code>proPrimitives.tsx</code>, 18-Point Quality Gate, 6 AE transitions, and 5-layer
-              SFX + Kokoro-82M render pipeline in one zip.
+              Ships the lineless split-shaded <code>proPrimitives.tsx</code> (
+              <code>LeaderCallout</code>, <code>SplitBuilding</code>), 12-Domain Playbook, 8 Shot
+              Archetypes, 18-Point Quality Gate, 6 AE transitions, and 5-layer SFX + Kokoro-82M
+              pipeline.
             </p>
           </div>
 

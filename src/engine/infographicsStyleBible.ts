@@ -299,11 +299,11 @@ export const INFOGRAPHICS_SHOW_BREAKDOWN: StyleBreakdownPillar[] = [
   },
   {
     id: 'outlined-flat-vector',
-    pillar: 'Crisp Outlined Flat-Vector + Hard Cast Shadows',
+    pillar: 'Lineless 2-Tone Split-Shaded Editorial Vector + 45° Cast Shadows',
     infographicsShowDna:
-      'Adobe Illustrator shape layers with uniform dark charcoal outlines (#18222F) and saturated thematic fills.',
+      'Crisp lineless geometric shapes separated by sunlit front facades and 14–18% darker shaded planes — zero chunky black coloring-book strokes.',
     ultraUpgrade:
-      'Adds layered diagonal flat shadow polygons, rich atmospheric sky-to-horizon gradients, subtle sunlit light shafts, specular bevel rims, and balanced editorial margins at true 60fps.',
+      'Pairs 2-tone split-shaded architecture (`SplitBuilding`) with 45° diagonal cast shadow polygons, multi-plane atmospheric skylines, diagonal volumetric light shafts, and cinema edge vignettes at true 60fps.',
   },
   {
     id: 'multiplane-25d',
@@ -311,15 +311,15 @@ export const INFOGRAPHICS_SHOW_BREAKDOWN: StyleBreakdownPillar[] = [
     infographicsShowDna:
       'Separates background scenery, midground architecture, and foreground props across Z-depth planes with constant virtual camera drift.',
     ultraUpgrade:
-      'Every scene runs 4 live parallax strata (drifting clouds & ambient motes -> distant skyline -> hero physical machinery/props -> foreground table/silhouette) driven by organic AE-eased camera breathing.',
+      'Every scene runs 4 live parallax strata (drifting two-tone clouds & ambient motes -> distant skyline -> hero physical machinery/props -> foreground table/silhouette) driven by organic AE-eased camera breathing.',
   },
   {
     id: 'floating-impact-type',
-    pillar: 'Open-Sky Kinetic Callouts (No Text Walls)',
+    pillar: 'Open-Sky Broadcast Headlines + Animated Leader-Line Callouts',
     infographicsShowDna:
-      'Bold heavy sans-serif numerals & 2–4 word callouts (Montserrat ExtraBold / Barlow Condensed) with dark outline/shadow floating cleanly over open sky.',
+      'Clean Barlow Condensed / Montserrat headlines floating in open negative space paired with pulsing target-dot + 45° elbow `LeaderCallout` pointers.',
     ultraUpgrade:
-      'Numbers roll smoothly with squash-and-stretch spring pop-ins (`$1 = ৳120`, `$1,500/MO`, `DAY 30`) + animated accent swooshes directly in open environmental negative space.',
+      'Numbers roll smoothly with elastic spring pop-ins (`$1 = ৳120`, `$1,500/MO`, `DAY 30`) + animated accent rules + decaying impact shake directly in open environmental negative space.',
   },
   {
     id: 'elastic-transitions',
@@ -544,7 +544,7 @@ export interface GigaQualityGateItem {
 }
 
 /**
- * 18-Point Giga Quality Gate enforced in both the Studio UI and the exported Antigravity Skill v5.0.
+ * 18-Point Giga Quality Gate enforced in both the Studio UI and the exported Antigravity Skill v6.0.
  */
 export const GIGA_QUALITY_CHECKLIST: GigaQualityGateItem[] = [
   {
@@ -562,8 +562,8 @@ export const GIGA_QUALITY_CHECKLIST: GigaQualityGateItem[] = [
   {
     id: 'qg-03',
     category: 'Visual Craft',
-    defectTargeted: 'Flat lifeless clip-art without depth or weight',
-    nonNegotiableStandard: 'Uniform dark charcoal vector outlines (#18222F), 2-tone cel-shaded highlights, diagonal cast shadow polygons, architectural trim, and atmospheric sky gradients.',
+    defectTargeted: 'Chunky 4px black coloring-book cartoon outlines and flat lifeless clip-art',
+    nonNegotiableStandard: 'Lineless 2-tone split-shaded editorial vector art (sunlit front facade + 14% darker shaded plane), 45° diagonal cast shadows, multi-plane `SplitBuilding` skylines, and volumetric key-light rays.',
   },
   {
     id: 'qg-04',
@@ -574,8 +574,8 @@ export const GIGA_QUALITY_CHECKLIST: GigaQualityGateItem[] = [
   {
     id: 'qg-05',
     category: 'Visual Craft',
-    defectTargeted: 'Cramped overlapping text, dark TikTok subtitle pill boxes, or corner HUD timers cluttering artwork',
-    nonNegotiableStandard: 'Float 1–4 word Montserrat 900 callouts in open negative space with crisp charcoal stroke + hard shadow, use borderless outlined broadcast captions (zero dark pill box), and never stamp permanent progress bars or corner timers over the canvas.',
+    defectTargeted: 'Bubble-outlined cartoon text, dark TikTok subtitle boxes, or corner HUD clutter',
+    nonNegotiableStandard: 'Clean Barlow Condensed broadcast headlines + animated `LeaderCallout` pointers in open negative space, soft-scrim broadcast captions (zero pill box, zero thick cartoon stroke), and zero permanent HUD timers.',
   },
   {
     id: 'qg-06',

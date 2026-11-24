@@ -9,16 +9,17 @@ export const FILM_FPS = 60;
 export const TRANSITION_FRAMES = 24; // Silky 0.40s AE Graph Editor smooth transition
 
 // Signature Infographics Show elastic inertia-bounce spring presets
-export const SPRING_POP = { damping: 11.5, stiffness: 255, mass: 0.62 };
-export const SPRING_SNAPPY = { damping: 15.5, stiffness: 215, mass: 0.75 };
+export const SPRING_POP = { damping: 12.5, stiffness: 250, mass: 0.62 };
+export const SPRING_SNAPPY = { damping: 16, stiffness: 220, mass: 0.72 };
 export const SPRING_SMOOTH = { damping: 24, stiffness: 125, mass: 0.95 };
-export const SPRING_SLAM = { damping: 10.5, stiffness: 335, mass: 0.52 };
+export const SPRING_SLAM = { damping: 10.5, stiffness: 340, mass: 0.52 };
 
 export const FONT_DISPLAY = "'Montserrat', 'Plus Jakarta Sans', system-ui, sans-serif";
 export const FONT_CONDENSED = "'Barlow Condensed', 'Montserrat', sans-serif";
 export const FONT_BODY = "'Plus Jakarta Sans', 'Montserrat', system-ui, sans-serif";
 
-export const OUTLINE_COLOR = '#18222F';
+// Retained strictly for subtle UI accents & backward exports — v6.0 worlds are LINELESS split-shaded!
+export const OUTLINE_COLOR = '#121C2B';
 
 export interface BeatTimingSpec {
   index: number;
@@ -188,20 +189,32 @@ export function getWorldPalette(
   if (mode === 'dark' && (worldId === 'studio-spotlight' || worldId === 'sunlit-street')) {
     return {
       ...base,
-      skyTop: '#142238',
-      skyBottom: '#243C5E',
-      horizonFar: '#1C314F',
-      horizonNear: '#12223A',
+      skyTop: '#101E34',
+      skyBottom: '#1F3A60',
+      horizonFar: '#162C4B',
+      horizonNear: '#0D1E36',
       calloutFill: '#FFD166',
-      calloutStroke: '#0E1726',
+      calloutStroke: '#0B1320',
     };
   }
   return base;
 }
 
 /**
- * Authentic After Effects 8-spoke radial ImpactBurst (tiny vector accent lines + diamonds).
- * Fires for ~18 frames on hero stamps, cash reveals, and major callout pops — zero blur overhead.
+ * Decaying After Effects camera impact shake helper for slams, stamps, and reveals.
+ */
+export function getImpactShake(frame: number, triggerFrame: number, intensity = 14): { x: number; y: number } {
+  const local = frame - triggerFrame;
+  if (local < 0 || local > 26) return { x: 0, y: 0 };
+  const decay = Math.exp(-local / 7.5);
+  return {
+    x: Math.sin(local * 2.7) * intensity * decay,
+    y: Math.cos(local * 3.4) * intensity * 0.55 * decay,
+  };
+}
+
+/**
+ * Authentic After Effects 12-spoke lineless geometric ImpactBurst (crisp editorial rays + sparks).
  */
 export const ImpactBurst: React.FC<{
   x: number;
@@ -214,54 +227,50 @@ export const ImpactBurst: React.FC<{
   x,
   y,
   triggerFrame,
-  radius = 68,
+  radius = 74,
   color = '#FFD166',
   secondaryColor = '#FFFFFF',
 }) => {
   const frame = useCurrentFrame();
   const localF = frame - triggerFrame;
-  if (localF < 0 || localF > 22) return null;
+  if (localF < 0 || localF > 24) return null;
 
-  const p = interpolate(localF, [0, 22], [0, 1], {
+  const p = interpolate(localF, [0, 24], [0, 1], {
     easing: Easing.out(Easing.cubic),
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
-  const innerR = interpolate(p, [0, 1], [radius * 0.22, radius * 1.15]);
-  const outerR = interpolate(p, [0, 0.45, 1], [radius * 0.42, radius * 1.18, radius * 1.24]);
-  const opacity = interpolate(p, [0, 0.2, 0.72, 1], [0, 1, 0.85, 0]);
-  const strokeW = interpolate(p, [0, 1], [5.5, 1.5]);
+  const innerR = interpolate(p, [0, 1], [radius * 0.25, radius * 1.18]);
+  const outerR = interpolate(p, [0, 0.42, 1], [radius * 0.48, radius * 1.24, radius * 1.3]);
+  const opacity = interpolate(p, [0, 0.18, 0.72, 1], [0, 1, 0.85, 0]);
+  const strokeW = interpolate(p, [0, 1], [5.2, 1.2]);
+  const ringR = interpolate(p, [0, 1], [radius * 0.2, radius * 1.05]);
 
   return (
     <g transform={`translate(${x}, ${y})`} opacity={opacity.toFixed(3)}>
-      {[0, 45, 90, 135, 180, 225, 270, 315].map((deg, idx) => {
+      <circle
+        r={ringR.toFixed(1)}
+        fill="none"
+        stroke={color}
+        strokeWidth={(strokeW * 0.65).toFixed(2)}
+        opacity={0.55}
+      />
+      {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((deg, idx) => {
         const rad = (deg * Math.PI) / 180;
-        const x1 = Math.cos(rad) * innerR;
-        const y1 = Math.sin(rad) * innerR;
-        const x2 = Math.cos(rad) * outerR;
-        const y2 = Math.sin(rad) * outerR;
         const isMain = idx % 2 === 0;
+        const r1 = isMain ? innerR : innerR * 0.82;
+        const r2 = isMain ? outerR : outerR * 0.84;
         return (
-          <g key={deg}>
-            <line
-              x1={x1.toFixed(1)}
-              y1={y1.toFixed(1)}
-              x2={x2.toFixed(1)}
-              y2={y2.toFixed(1)}
-              stroke={OUTLINE_COLOR}
-              strokeWidth={strokeW + 2.5}
-              strokeLinecap="round"
-            />
-            <line
-              x1={x1.toFixed(1)}
-              y1={y1.toFixed(1)}
-              x2={x2.toFixed(1)}
-              y2={y2.toFixed(1)}
-              stroke={isMain ? color : secondaryColor}
-              strokeWidth={strokeW}
-              strokeLinecap="round"
-            />
-          </g>
+          <line
+            key={deg}
+            x1={(Math.cos(rad) * r1).toFixed(1)}
+            y1={(Math.sin(rad) * r1).toFixed(1)}
+            x2={(Math.cos(rad) * r2).toFixed(1)}
+            y2={(Math.sin(rad) * r2).toFixed(1)}
+            stroke={isMain ? color : secondaryColor}
+            strokeWidth={isMain ? strokeW : strokeW * 0.65}
+            strokeLinecap="round"
+          />
         );
       })}
     </g>
@@ -269,8 +278,7 @@ export const ImpactBurst: React.FC<{
 };
 
 /**
- * Brief 2.2-second animated broadcast Chapter Sliver that glides smoothly in when a beat begins
- * and exits cleanly so it never clutters the illustrated frame.
+ * Sleek 2.3-second broadcast Chapter Sliver that wipes in cleanly at the top-left of each beat.
  */
 export const ChapterSliver: React.FC<{
   chapter: string;
@@ -278,20 +286,20 @@ export const ChapterSliver: React.FC<{
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  if (frame < 6 || frame > 142) return null;
+  if (frame < 5 || frame > 148) return null;
 
   const enter = spring({
-    frame: Math.max(0, frame - 6),
+    frame: Math.max(0, frame - 5),
     fps,
-    config: { damping: 16, stiffness: 220, mass: 0.7 },
+    config: { damping: 18, stiffness: 230, mass: 0.68 },
   });
-  const exit = interpolate(frame, [118, 140], [0, 1], {
+  const exit = interpolate(frame, [122, 146], [0, 1], {
     easing: Easing.bezier(0.76, 0, 0.24, 1),
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
-  const tx = (1 - enter) * -280 - exit * 320;
-  const opacity = Math.min(1, enter * 1.4) * (1 - exit);
+  const tx = (1 - enter) * -260 - exit * 300;
+  const opacity = Math.min(1, enter * 1.45) * (1 - exit);
 
   return (
     <div
@@ -306,20 +314,20 @@ export const ChapterSliver: React.FC<{
         display: 'flex',
         alignItems: 'center',
         gap: 10,
-        background: 'rgba(18, 28, 42, 0.88)',
+        background: 'rgba(11, 18, 30, 0.78)',
         borderLeft: '4px solid #F5B82E',
-        borderRadius: '0 6px 6px 0',
+        borderRadius: '0 4px 4px 0',
         padding: '6px 14px 6px 12px',
-        boxShadow: '0 4px 0 rgba(14, 21, 31, 0.45)',
+        boxShadow: '0 6px 18px rgba(4, 9, 18, 0.32)',
       }}
     >
       <span
         style={{
-          fontFamily: FONT_DISPLAY,
-          fontSize: 13,
-          fontWeight: 900,
-          letterSpacing: '0.09em',
-          color: '#FFFFFF',
+          fontFamily: FONT_CONDENSED,
+          fontSize: 16,
+          fontWeight: 800,
+          letterSpacing: '0.1em',
+          color: '#F8FAFC',
           textTransform: 'uppercase',
         }}
       >
@@ -330,8 +338,9 @@ export const ChapterSliver: React.FC<{
 };
 
 /**
- * Floating open-sky bold kinetic callout (The Infographics Show Ultra style — ZERO box borders!)
- * Enhanced with elastic squash-and-stretch settle, AE ImpactBurst spark accent, living float, and accent underline.
+ * v6.0 Authentic Infographics Show Broadcast Headline:
+ * ZERO chunky cartoon black bubble outlines — razor-sharp condensed/display editorial typography
+ * with crisp directional cinema shadow, smooth track-matte rise, and animated accent bar.
  */
 export const FloatingCallout: React.FC<{
   x: number;
@@ -340,10 +349,11 @@ export const FloatingCallout: React.FC<{
   subtext?: string;
   size?: number;
   fill?: string;
-  stroke?: string;
+  accent?: string;
   delayFrames?: number;
   align?: 'start' | 'middle' | 'end';
   withBurst?: boolean;
+  darkBackdrop?: boolean;
 }> = ({
   x,
   y,
@@ -351,108 +361,111 @@ export const FloatingCallout: React.FC<{
   subtext,
   size = 54,
   fill = '#FFFFFF',
-  stroke = OUTLINE_COLOR,
+  accent,
   delayFrames = 8,
   align = 'middle',
   withBurst,
+  darkBackdrop = true,
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const localF = Math.max(0, frame - delayFrames);
   const pop = spring({ frame: localF, fps, config: SPRING_POP });
-  const ty = (1 - pop) * 28;
+  const ty = (1 - pop) * 26;
+  const floatY = Math.sin(localF * 0.04) * 1.8;
 
-  // Subtle squash-and-stretch during the first 24 frames of entrance + calm breathing float after
-  const settleEnergy = Math.exp(-localF / 12) * Math.sin(localF * 0.45);
-  const sx = Math.max(0.001, pop * (1 + settleEnergy * 0.08));
-  const sy = Math.max(0.001, pop * (1 - settleEnergy * 0.06));
-  const floatY = Math.sin(localF * 0.045) * 2.2;
-
-  // Subtle editorial accent underline sweeps smoothly under hero callouts
-  const underlineW = Math.min(220, Math.max(72, text.length * size * 0.42));
-  const underlineP = interpolate(localF, [10, 30], [0, 1], {
+  const accentColor = accent ?? (fill === '#FFD166' || fill === '#F5B82E' ? '#2AD08E' : '#F5B82E');
+  const barW = Math.min(240, Math.max(64, text.length * size * 0.36));
+  const barP = interpolate(localF, [6, 26], [0, 1], {
     easing: Easing.bezier(0.22, 1, 0.36, 1),
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
-  const lineStartX = align === 'start' ? 0 : align === 'end' ? -underlineW : -underlineW / 2;
-  const showBurst = withBurst ?? (size >= 52 && align === 'middle');
+  const barX = align === 'start' ? 0 : align === 'end' ? -barW : -barW / 2;
+  const showBurst = withBurst ?? false;
+  const shadowColor = darkBackdrop ? 'rgba(6, 11, 20, 0.52)' : 'rgba(12, 20, 34, 0.16)';
 
   return (
     <g>
       {showBurst && (
         <ImpactBurst
           x={x}
-          y={y - size * 0.28}
+          y={y - size * 0.25}
           triggerFrame={delayFrames + 2}
-          radius={Math.min(95, size * 1.35)}
-          color={fill === '#FFD166' ? '#2AD08E' : '#FFD166'}
+          radius={Math.min(92, size * 1.3)}
+          color={accentColor}
         />
       )}
       <g
-        transform={`translate(${x}, ${(y + ty + floatY).toFixed(2)}) scale(${sx.toFixed(4)}, ${sy.toFixed(4)})`}
+        transform={`translate(${x}, ${(y + ty + floatY).toFixed(2)})`}
         opacity={Math.min(1, pop * 1.45)}
       >
-        {/* Crisp hard flat drop-shadow copy */}
+        {/* Clean directional broadcast shadow (NO cartoon bubble stroke!) */}
         <text
-          x={4}
-          y={5.5}
+          x={0}
+          y={4}
           textAnchor={align}
-          fontFamily={FONT_DISPLAY}
-          fontWeight={900}
-          fontSize={size}
-          fill="rgba(16, 24, 36, 0.36)"
-          letterSpacing="-0.02em"
+          fontFamily={FONT_CONDENSED}
+          fontWeight={800}
+          fontSize={size * 1.12}
+          fill={shadowColor}
+          letterSpacing="0.02em"
         >
           {text}
         </text>
-        {/* Outlined hero typography floating freely in open air */}
+        {/* Crisp primary broadcast headline */}
         <text
           x={0}
           y={0}
           textAnchor={align}
-          fontFamily={FONT_DISPLAY}
-          fontWeight={900}
-          fontSize={size}
+          fontFamily={FONT_CONDENSED}
+          fontWeight={800}
+          fontSize={size * 1.12}
           fill={fill}
-          stroke={stroke}
-          strokeWidth={Math.max(5.5, size * 0.135)}
-          paintOrder="stroke fill"
-          strokeLinejoin="round"
-          letterSpacing="-0.02em"
+          letterSpacing="0.02em"
         >
           {text}
         </text>
-        {/* Crisp animated accent underline bar (when no subtext sits right beneath) */}
-        {!subtext && size >= 44 && underlineP > 0.02 && (
+
+        {/* Sleek animated editorial rule */}
+        {barP > 0.02 && (
           <rect
-            x={lineStartX}
-            y={11}
-            width={underlineW * underlineP}
-            height={5}
-            rx={2.5}
-            fill={fill === '#FFD166' ? '#2AD08E' : '#FFD166'}
-            stroke={stroke}
-            strokeWidth={2}
+            x={barX}
+            y={10}
+            width={barW * barP}
+            height={4}
+            rx={2}
+            fill={accentColor}
           />
         )}
+
         {subtext && (
-          <text
-            x={0}
-            y={size * 0.54}
-            textAnchor={align}
-            fontFamily={FONT_DISPLAY}
-            fontWeight={800}
-            fontSize={Math.max(18, size * 0.36)}
-            fill="#FFD166"
-            stroke={stroke}
-            strokeWidth={4.5}
-            paintOrder="stroke fill"
-            strokeLinejoin="round"
-            letterSpacing="0.06em"
-          >
-            {subtext}
-          </text>
+          <>
+            <text
+              x={0}
+              y={size * 0.48 + 14}
+              textAnchor={align}
+              fontFamily={FONT_BODY}
+              fontWeight={800}
+              fontSize={Math.max(15, size * 0.28)}
+              fill={shadowColor}
+              letterSpacing="0.14em"
+            >
+              {subtext}
+            </text>
+            <text
+              x={0}
+              y={size * 0.48 + 12}
+              textAnchor={align}
+              fontFamily={FONT_BODY}
+              fontWeight={800}
+              fontSize={Math.max(15, size * 0.28)}
+              fill={darkBackdrop ? '#FFD166' : '#334155'}
+              letterSpacing="0.14em"
+            >
+              {subtext}
+            </text>
+          </>
         )}
       </g>
     </g>
@@ -460,34 +473,262 @@ export const FloatingCallout: React.FC<{
 };
 
 /**
- * Reusable flat-vector drifting cloud bank with dual-depth parallax speed for 2.5D skies.
+ * Signature Infographics Show Animated Leader-Line Pointer:
+ * Pulsing target node -> crisp 45-degree elbow + horizontal rule -> bold condensed stat in open air!
+ */
+export const LeaderCallout: React.FC<{
+  targetX: number;
+  targetY: number;
+  elbowX: number;
+  elbowY: number;
+  endX: number;
+  label: string;
+  sublabel?: string;
+  accent?: string;
+  textColor?: string;
+  delayFrames?: number;
+}> = ({
+  targetX,
+  targetY,
+  elbowX,
+  elbowY,
+  endX,
+  label,
+  sublabel,
+  accent = '#FFD166',
+  textColor = '#FFFFFF',
+  delayFrames = 14,
+}) => {
+  const frame = useCurrentFrame();
+  const localF = Math.max(0, frame - delayFrames);
+  const lineP = interpolate(localF, [0, 22], [0, 1], {
+    easing: Easing.bezier(0.22, 1, 0.36, 1),
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+  const textP = interpolate(localF, [14, 30], [0, 1], {
+    easing: Easing.out(Easing.cubic),
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+
+  if (localF <= 0) return null;
+
+  const seg1P = Math.min(1, lineP * 2);
+  const seg2P = Math.max(0, (lineP - 0.5) * 2);
+  const curElbowX = targetX + (elbowX - targetX) * seg1P;
+  const curElbowY = targetY + (elbowY - targetY) * seg1P;
+  const curEndX = elbowX + (endX - elbowX) * seg2P;
+  const alignRight = endX >= elbowX;
+  const pulse = 9 + Math.sin(frame * 0.14) * 3.5;
+
+  return (
+    <g>
+      {/* Pulsing Target Node */}
+      <circle cx={targetX} cy={targetY} r={pulse} fill={accent} opacity={0.26} />
+      <circle cx={targetX} cy={targetY} r={5} fill={accent} />
+
+      {/* Crisp Vector Elbow Leader Line */}
+      <line
+        x1={targetX}
+        y1={targetY}
+        x2={curElbowX}
+        y2={curElbowY}
+        stroke={accent}
+        strokeWidth={2.5}
+        strokeLinecap="round"
+      />
+      {seg2P > 0 && (
+        <line
+          x1={elbowX}
+          y1={elbowY}
+          x2={curEndX}
+          y2={elbowY}
+          stroke={accent}
+          strokeWidth={2.5}
+          strokeLinecap="round"
+        />
+      )}
+
+      {/* Clean Floating Broadcast Label Above Leader Rule */}
+      {textP > 0.01 && (
+        <g
+          transform={`translate(${endX}, ${(elbowY - 10 + (1 - textP) * 8).toFixed(1)})`}
+          opacity={textP}
+        >
+          <text
+            x={0}
+            y={2}
+            textAnchor={alignRight ? 'end' : 'start'}
+            fontFamily={FONT_CONDENSED}
+            fontWeight={800}
+            fontSize={30}
+            fill="rgba(6, 11, 20, 0.45)"
+          >
+            {label}
+          </text>
+          <text
+            x={0}
+            y={0}
+            textAnchor={alignRight ? 'end' : 'start'}
+            fontFamily={FONT_CONDENSED}
+            fontWeight={800}
+            fontSize={30}
+            fill={textColor}
+          >
+            {label}
+          </text>
+          {sublabel && (
+            <>
+              <text
+                x={0}
+                y={27.5}
+                textAnchor={alignRight ? 'end' : 'start'}
+                fontFamily={FONT_BODY}
+                fontWeight={700}
+                fontSize={12}
+                fill="rgba(6, 11, 20, 0.55)"
+                letterSpacing="0.1em"
+              >
+                {sublabel}
+              </text>
+              <text
+                x={0}
+                y={26}
+                textAnchor={alignRight ? 'end' : 'start'}
+                fontFamily={FONT_BODY}
+                fontWeight={700}
+                fontSize={12}
+                fill={accent}
+                letterSpacing="0.1em"
+              >
+                {sublabel}
+              </text>
+            </>
+          )}
+        </g>
+      )}
+    </g>
+  );
+};
+
+/**
+ * Reusable Lineless Split-Shaded Architectural Skyscraper (Infographics Show Broadcast Craft):
+ * Lit front facade + 3D shaded side return + cornice cap + reflective window grid + rooftop spire!
+ */
+export const SplitBuilding: React.FC<{
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  litColor: string;
+  shadeColor: string;
+  windowColor?: string;
+  litWindowColor?: string;
+  frame?: number;
+  litThreshold?: number;
+  spire?: boolean;
+}> = ({
+  x,
+  y,
+  w,
+  h,
+  litColor,
+  shadeColor,
+  windowColor = 'rgba(255,255,255,0.16)',
+  litWindowColor = '#FFD166',
+  frame = 0,
+  litThreshold = 9999,
+  spire = false,
+}) => {
+  const sideW = Math.round(w * 0.24);
+  const frontW = w - sideW;
+  const cols = Math.max(2, Math.floor((frontW - 18) / 22));
+  const rows = Math.max(3, Math.floor((h - 36) / 28));
+
+  return (
+    <g transform={`translate(${x}, ${y})`}>
+      {/* Rooftop Penthouse & Spire */}
+      {spire && (
+        <>
+          <rect x={frontW * 0.25} y={-14} width={frontW * 0.5} height={14} fill={shadeColor} />
+          <line x1={frontW * 0.5} y1={-14} x2={frontW * 0.5} y2={-48} stroke={litColor} strokeWidth={3} />
+          <circle cx={frontW * 0.5} cy={-48} r={3.5} fill="#FF5A5F" opacity={0.55 + 0.45 * Math.sin(frame * 0.12)} />
+        </>
+      )}
+      {/* Sunlit Front Facade */}
+      <rect x={0} y={0} width={frontW} height={h} fill={litColor} />
+      {/* 3D Shaded Right Return Plane */}
+      <rect x={frontW} y={0} width={sideW} height={h} fill={shadeColor} />
+      {/* Crisp Top Cornice Highlight */}
+      <rect x={-3} y={0} width={w + 6} height={6} fill={litColor} opacity={0.95} />
+      <rect x={0} y={6} width={w} height={3} fill="rgba(0,0,0,0.18)" />
+      {/* Diagonal Glass Sheen Across Facade */}
+      <polygon points={`0,10 ${frontW},10 ${frontW},${Math.min(h, 90)} 0,${Math.min(h, 150)}`} fill="#FFFFFF" opacity={0.07} />
+
+      {/* Crisp Architectural Window Grid */}
+      {Array.from({ length: rows }, (_, r) =>
+        Array.from({ length: cols }, (_, c) => {
+          const wx = 12 + c * ((frontW - 24) / cols);
+          const wy = 20 + r * 26;
+          const idx = r * cols + c;
+          const isWarm = (idx * 7 + Math.round(x)) % 5 === 0 || frame > litThreshold + idx * 14;
+          return (
+            <rect
+              key={`${r}-${c}`}
+              x={wx}
+              y={wy}
+              width={11}
+              height={16}
+              rx={1.5}
+              fill={isWarm ? litWindowColor : windowColor}
+              opacity={isWarm ? 0.85 + 0.15 * Math.sin(frame * 0.06 + idx) : 0.72}
+            />
+          );
+        })
+      )}
+    </g>
+  );
+};
+
+/**
+ * Authentic Infographics Show Two-Tone Lineless Flat-Bottomed Cumulus Clouds.
  */
 export const DriftingClouds: React.FC<{
   frame: number;
   tint?: string;
+  shadeTint?: string;
   opacity?: number;
   speed?: number;
-}> = ({ frame, tint = '#FFFFFF', opacity = 0.85, speed = 0.42 }) => {
+}> = ({ frame, tint = '#FFFFFF', shadeTint, opacity = 0.88, speed = 0.42 }) => {
   const clouds = [
-    { base: 140, y: 112, s: 1.08, spd: 1.05, op: 1 },
-    { base: 560, y: 78, s: 0.78, spd: 0.65, op: 0.78 },
-    { base: 980, y: 130, s: 1.18, spd: 1.28, op: 0.95 },
-    { base: 1340, y: 94, s: 0.88, spd: 0.82, op: 0.84 },
+    { base: 140, y: 168, s: 1.05, spd: 1.05, op: 0.92 },
+    { base: 560, y: 148, s: 0.78, spd: 0.65, op: 0.7 },
+    { base: 980, y: 182, s: 1.12, spd: 1.26, op: 0.88 },
+    { base: 1340, y: 156, s: 0.86, spd: 0.84, op: 0.78 },
   ];
+  const under = shadeTint ?? 'rgba(30, 58, 95, 0.14)';
+
   return (
     <g opacity={opacity}>
       {clouds.map((c, i) => {
-        const cx = ((c.base + frame * speed * c.spd) % 1580) - 170;
-        const bob = Math.sin(frame * 0.02 + i * 1.4) * 2.5;
+        const cx = ((c.base + frame * speed * c.spd) % 1620) - 180;
+        const bob = Math.sin(frame * 0.018 + i * 1.4) * 2.4;
         return (
           <g
             key={i}
             opacity={c.op}
             transform={`translate(${cx.toFixed(1)}, ${(c.y + bob).toFixed(1)}) scale(${c.s})`}
           >
+            {/* Main sunlit fluffy silhouette (LINELESS!) */}
             <path
-              d="M -68 18 Q -70 -6 -44 -8 Q -34 -34 -4 -30 Q 22 -42 42 -16 Q 68 -14 68 10 Q 68 22 52 22 L -56 22 Q -68 22 -68 18 Z"
+              d="M -78 20 Q -80 -6 -48 -8 Q -36 -38 -4 -32 Q 24 -46 46 -18 Q 76 -16 76 10 Q 76 22 58 22 L -64 22 Q -78 22 -78 20 Z"
               fill={tint}
+            />
+            {/* Crisp flat-bottom shadowed cloud underside */}
+            <path
+              d="M -74 14 Q -40 10 0 13 Q 40 10 74 14 Q 74 22 58 22 L -64 22 Q -74 22 -74 14 Z"
+              fill={under}
             />
           </g>
         );
@@ -497,18 +738,20 @@ export const DriftingClouds: React.FC<{
 };
 
 /**
- * Lightweight cinema atmosphere layer (subtle drifting sunlit motes, editorial + sparkles & key-light shaft).
- * Uses 100% pure vector opacity primitives (zero CSS blur) so 60fps renders remain blazing fast.
+ * Cinema Broadcast Compositor Overlay:
+ * Subtle radial edge vignette + volumetric diagonal light shafts + ambient floating motes.
+ * Zero heavy CSS blur — 100% pure lightweight SVG for silky 60fps rendering.
  */
 export const AmbientAtmosphere: React.FC<{
   frame: number;
   warm?: boolean;
 }> = ({ frame, warm = true }) => {
   const motes = [
-    { x: 180, y: 180, r: 3.0, spx: 0.35, spy: -0.22, ph: 0.2, kind: 'dot' as const },
-    { x: 460, y: 290, r: 2.5, spx: 0.24, spy: -0.18, ph: 1.4, kind: 'plus' as const },
-    { x: 760, y: 160, r: 3.4, spx: 0.42, spy: -0.25, ph: 2.6, kind: 'dot' as const },
-    { x: 1060, y: 240, r: 2.8, spx: 0.3, spy: -0.2, ph: 3.9, kind: 'plus' as const },
+    { x: 160, y: 190, r: 2.6, spx: 0.32, spy: -0.2, ph: 0.2 },
+    { x: 480, y: 310, r: 2.1, spx: 0.22, spy: -0.16, ph: 1.5 },
+    { x: 780, y: 150, r: 3.0, spx: 0.38, spy: -0.22, ph: 2.8 },
+    { x: 1080, y: 260, r: 2.4, spx: 0.28, spy: -0.18, ph: 4.1 },
+    { x: 320, y: 460, r: 2.0, spx: 0.25, spy: -0.14, ph: 5.2 },
   ];
   const moteColor = warm ? '#FFF5D6' : '#CFE9FF';
 
@@ -524,26 +767,26 @@ export const AmbientAtmosphere: React.FC<{
         zIndex: 20,
       }}
     >
-      {/* Crisp subtle sunlit key-light shaft (pure solid low-opacity polygon = instant render) */}
-      <polygon points="0,0 440,0 140,720 0,720" fill={moteColor} opacity={0.045} />
+      <defs>
+        <radialGradient id="cinemaVignette" cx="50%" cy="48%" r="68%">
+          <stop offset="58%" stopColor="#050A14" stopOpacity="0" />
+          <stop offset="100%" stopColor="#050A14" stopOpacity="0.38" />
+        </radialGradient>
+        <linearGradient id="volumetricBeam" x1="0" y1="0" x2="0.6" y2="1">
+          <stop offset="0%" stopColor={moteColor} stopOpacity="0.10" />
+          <stop offset="100%" stopColor={moteColor} stopOpacity="0" />
+        </linearGradient>
+      </defs>
 
-      {/* Gently drifting ambient atmospheric motes & editorial sparkles */}
+      {/* Subtle volumetric diagonal sunlight/moonlight rays */}
+      <polygon points="0,0 380,0 120,720 0,720" fill="url(#volumetricBeam)" />
+      <polygon points="440,0 590,0 340,720 210,720" fill="url(#volumetricBeam)" opacity={0.55} />
+
+      {/* Gently drifting atmospheric light dust */}
       {motes.map((m, idx) => {
         const mx = (m.x + frame * m.spx) % 1280;
-        const my = (((m.y + frame * m.spy) % 600) + 600) % 600;
-        const pulse = 0.22 + 0.2 * Math.sin(frame * 0.055 + m.ph);
-        if (m.kind === 'plus') {
-          return (
-            <g
-              key={idx}
-              transform={`translate(${mx.toFixed(1)}, ${my.toFixed(1)}) rotate(${((frame * 0.4 + idx * 30) % 360).toFixed(1)})`}
-              opacity={pulse.toFixed(3)}
-            >
-              <line x1={-5} y1={0} x2={5} y2={0} stroke={moteColor} strokeWidth={2} strokeLinecap="round" />
-              <line x1={0} y1={-5} x2={0} y2={5} stroke={moteColor} strokeWidth={2} strokeLinecap="round" />
-            </g>
-          );
-        }
+        const my = (((m.y + frame * m.spy) % 620) + 620) % 620;
+        const pulse = 0.2 + 0.18 * Math.sin(frame * 0.05 + m.ph);
         return (
           <circle
             key={idx}
@@ -555,6 +798,9 @@ export const AmbientAtmosphere: React.FC<{
           />
         );
       })}
+
+      {/* Editorial Cinema Edge Vignette */}
+      <rect width={1280} height={720} fill="url(#cinemaVignette)" />
     </svg>
   );
 };
@@ -563,9 +809,9 @@ const POWER_WORD_PATTERN =
   /^(\$[\d,.]+|taka|usd|bdt|x|bangladesh|ninety|thirty|fifty|five|three-hundred-dollar|fifteen|hundred|payoneer|wise|storefront|global|proof|real|zero)\b/i;
 
 /**
- * Authentic Infographics Show broadcast subtitles:
- * ZERO dark floating pill box — crisp bold outlined typography with semantic power-word accents
- * and generous 14px spacing so popped active words never crowd neighbors.
+ * v6.0 Broadcast Documentary Captions:
+ * Clean editorial cinema legibility — subtle dark bottom scrim + crisp drop-shadowed typography
+ * (ZERO TikTok pill box, ZERO chunky cartoon black sticker outline!).
  */
 export const KineticSubtitleBar: React.FC<{
   narration: string;
@@ -592,11 +838,11 @@ export const KineticSubtitleBar: React.FC<{
   const pop = spring({
     frame: localWordFrame,
     fps,
-    config: { damping: 14, stiffness: 300, mass: 0.42 },
+    config: { damping: 16, stiffness: 310, mass: 0.42 },
   });
 
-  const strokeShadow =
-    '-2.5px -2.5px 0 #141D29, 2.5px -2.5px 0 #141D29, -2.5px 2.5px 0 #141D29, 2.5px 2.5px 0 #141D29, 0 4px 0 #141D29';
+  const broadcastShadow =
+    '0 2px 10px rgba(4, 9, 18, 0.92), 0 1px 3px rgba(4, 9, 18, 0.98), 0 0 22px rgba(4, 9, 18, 0.55)';
 
   return (
     <div
@@ -604,7 +850,11 @@ export const KineticSubtitleBar: React.FC<{
         position: 'absolute',
         left: 0,
         right: 0,
-        bottom: 24,
+        bottom: 0,
+        paddingTop: 34,
+        paddingBottom: 22,
+        background:
+          'linear-gradient(180deg, rgba(6, 11, 20, 0) 0%, rgba(6, 11, 20, 0.54) 100%)',
         display: 'flex',
         justifyContent: 'center',
         zIndex: 30,
@@ -613,13 +863,13 @@ export const KineticSubtitleBar: React.FC<{
     >
       <div
         style={{
-          padding: '4px 18px',
+          padding: '2px 24px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           flexWrap: 'wrap',
-          gap: 14,
-          maxWidth: '90%',
+          gap: 11,
+          maxWidth: '88%',
         }}
       >
         {chunk.map((word, idx) => {
@@ -633,14 +883,18 @@ export const KineticSubtitleBar: React.FC<{
             <span
               key={`${groupStart}-${idx}`}
               style={{
-                fontFamily: FONT_DISPLAY,
-                fontSize: 30,
-                fontWeight: 900,
+                fontFamily: FONT_BODY,
+                fontSize: 28,
+                fontWeight: 800,
                 letterSpacing: '-0.01em',
-                color: isCurrent ? activeColor : isSpoken ? '#FFFFFF' : 'rgba(255,255,255,0.85)',
-                textShadow: strokeShadow,
+                color: isCurrent
+                  ? activeColor
+                  : isSpoken
+                    ? '#FFFFFF'
+                    : 'rgba(255, 255, 255, 0.84)',
+                textShadow: broadcastShadow,
                 transform: isCurrent
-                  ? `scale(${(0.98 + pop * 0.12).toFixed(3)}) translateY(${(-pop * 3.0).toFixed(1)}px)`
+                  ? `scale(${(1 + pop * 0.08).toFixed(3)}) translateY(${(-pop * 2.2).toFixed(1)}px)`
                   : 'scale(1)',
                 display: 'inline-block',
               }}
@@ -655,7 +909,7 @@ export const KineticSubtitleBar: React.FC<{
 };
 
 /**
- * Organic documentary camera breathing transform (AE ease-in-out + gentle micro-float so every frame breathes smoothly).
+ * Organic documentary camera breathing transform (AE ease-in-out + gentle micro-float).
  */
 export function getCameraTransform(
   frame: number,
@@ -667,22 +921,21 @@ export function getCameraTransform(
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
-  // Subtle documentary organic breathing micro-drift (never dizzy, always alive)
-  const breathY = Math.sin(frame * 0.022) * 2.6;
-  const breathRot = Math.sin(frame * 0.015) * 0.16;
+  const breathY = Math.sin(frame * 0.022) * 2.4;
+  const breathRot = Math.sin(frame * 0.015) * 0.14;
 
   if (mode === 'push') {
-    const s = 1.0 + p * 0.072;
+    const s = 1.0 + p * 0.082;
     return `translate(640, ${(360 + breathY).toFixed(2)}) rotate(${breathRot.toFixed(3)}) scale(${s.toFixed(4)}) translate(-640, -360)`;
   }
   if (mode === 'pull') {
-    const s = 1.075 - p * 0.072;
+    const s = 1.085 - p * 0.082;
     return `translate(640, ${(360 + breathY).toFixed(2)}) rotate(${(-breathRot).toFixed(3)}) scale(${s.toFixed(4)}) translate(-640, -360)`;
   }
   if (mode === 'pan-right') {
-    const tx = 20 - p * 40;
-    return `translate(${tx.toFixed(2)}, ${breathY.toFixed(2)}) translate(640, 360) scale(1.045) translate(-640, -360)`;
+    const tx = 22 - p * 44;
+    return `translate(${tx.toFixed(2)}, ${breathY.toFixed(2)}) translate(640, 360) scale(1.05) translate(-640, -360)`;
   }
-  const tx = -20 + p * 40;
-  return `translate(${tx.toFixed(2)}, ${breathY.toFixed(2)}) translate(640, 360) scale(1.045) translate(-640, -360)`;
+  const tx = -22 + p * 44;
+  return `translate(${tx.toFixed(2)}, ${breathY.toFixed(2)}) translate(640, 360) scale(1.05) translate(-640, -360)`;
 }

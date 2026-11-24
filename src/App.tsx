@@ -119,11 +119,11 @@ export default function App() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F7F9FC] text-[#0F172A] dark:bg-[#0B0F17] dark:text-[#F8FAFC] transition-colors duration-200">
+    <div className="min-h-screen flex flex-col bg-[#F7F9FC] text-[#0F172A] dark:bg-[#080C14] dark:text-[#F8FAFC] transition-colors duration-200">
       {/* Strict 3-Zone Top Bar Contract */}
-      <header className="sticky top-0 z-30 bg-[#F7F9FC]/92 dark:bg-[#0B0F17]/92 backdrop-blur-md border-b border-[#DCE3EE] dark:border-[#1E293B]">
-        <div className="max-w-[1360px] mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-8">
-          {/* Zone 1: Single-line Brand Wordmark */}
+      <header className="sticky top-0 z-30 bg-[#F7F9FC]/92 dark:bg-[#080C14]/92 backdrop-blur-md border-b border-[#DCE3EE] dark:border-[#1B263B]">
+        <div className="max-w-[1380px] mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-8">
+          {/* Zone 1: Single-line Brand Wordmark + Broadcast Aperture Mark */}
           <a
             href="#top"
             onClick={(e) => {
@@ -131,8 +131,19 @@ export default function App() {
               setActiveTab('studio');
               setStudioStep('preview');
             }}
-            className="font-editorial text-xl font-extrabold tracking-tight text-[#0F172A] dark:text-[#F8FAFC] whitespace-nowrap shrink-0"
+            className="inline-flex items-center gap-2.5 font-editorial text-xl font-extrabold tracking-tight text-[#0F172A] dark:text-[#F8FAFC] whitespace-nowrap shrink-0"
           >
+            <span
+              aria-hidden="true"
+              className="w-6 h-6 rounded-md bg-[#0F172A] dark:bg-[#F5B82E] inline-flex items-center justify-center shrink-0"
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path
+                  d="M2.5 2.5H8.5L11.5 7L8.5 11.5H2.5L5.5 7L2.5 2.5Z"
+                  className="fill-[#F5B82E] dark:fill-[#080C14]"
+                />
+              </svg>
+            </span>
             Sovereign Motion
           </a>
 
@@ -233,7 +244,7 @@ export default function App() {
               <span>
                 {activeTab === 'clipper'
                   ? 'YouTube Most Replayed Radar · EMA 9:16 Smart Crop'
-                  : `Infographics Show Ultra 60fps Skill · ${repoFiles.length} Self-Contained Files · Kokoro-82M (${config.kokoroQuantization.toUpperCase()})`}
+                  : `Infographics Show Broadcast v6.0 · ${repoFiles.length} Self-Contained Files · Kokoro-82M (${config.kokoroQuantization.toUpperCase()})`}
               </span>
             </div>
           )}
@@ -291,10 +302,10 @@ export default function App() {
       </main>
 
       {/* Quiet Editorial Footer */}
-      <footer className="border-t border-[#DCE3EE] dark:border-[#1E293B] py-6 mt-10">
-        <div className="max-w-[1360px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-[#526075] dark:text-[#8B9BB4]">
-          <span>Sovereign Motion · Infographics Show Ultra 60fps Studio & Antigravity Skill</span>
-          <span>Zero Box Templates · Zero Human Frames · 6 Pro-Editor Smooth Transitions · Kokoro-82M</span>
+      <footer className="border-t border-[#DCE3EE] dark:border-[#1B263B] py-6 mt-10">
+        <div className="max-w-[1380px] mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-[#526075] dark:text-[#8B9BB4]">
+          <span>Sovereign Motion · Infographics Show Broadcast v6.0 Studio & Antigravity Skill</span>
+          <span>Lineless Split-Shaded Art · Zero Box Templates · Zero Human Frames · 60fps AE Transitions</span>
         </div>
       </footer>
 

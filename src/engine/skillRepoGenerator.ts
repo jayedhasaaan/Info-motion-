@@ -42,17 +42,17 @@ export function generateSkillRepoFiles(
   const skillMd = `---
 name: ${config.repoName}
 description: >-
-  Infographics Show Ultra (Zero-Human, Zero-Box-Templates, 100% Real-World Scenarios)
+  Infographics Show Broadcast v6.0 (Zero-Human, Zero-Box-Templates, Lineless Split-Shaded)
   60fps Motion Graphics & Viral YouTube Clipping Skill for Google Antigravity IDE.
-  Combines The Infographics Show's bold outlined flat-vector physical storytelling
-  with 6 pro-editor AE Graph Editor transitions, a 12-Domain Creative Metaphor
-  Playbook, an executable 15-Point Quality Gate, local Kokoro-82M + WhisperX sync,
-  and true 60fps Remotion HD rendering with stereo transition SFX.
+  Combines The Infographics Show's unmistakable lineless 2-tone split-shaded editorial
+  vector storytelling with 6 pro-editor AE Graph Editor transitions, a 12-Domain Creative
+  Metaphor Playbook, an executable 18-Point Quality Gate, local Kokoro-82M + WhisperX sync,
+  and true 60fps Remotion HD rendering with 5-layer stereo SFX.
 ---
 
-# Sovereign Motion Ultra — Infographics Show (Zero-Human) 60fps Antigravity Skill
+# Sovereign Motion Broadcast v6.0 — Infographics Show (Zero-Human) 60fps Antigravity Skill
 
-Engineered for **${config.targetModel}** inside **Google Antigravity IDE**. Guarantees consistent, jaw-dropping, pro-editor **60fps** videos on **ANY topic** by fusing **The Infographics Show** real-world illustrated environment craft with **\`remotion-dev/skills\`**, **6 bespoke AE-Bezier smooth transitions**, and **100% local Kokoro-82M** narration.
+Engineered for **${config.targetModel}** inside **Google Antigravity IDE**. Guarantees consistent, jaw-dropping, pro-editor **60fps** videos on **ANY topic** by fusing **The Infographics Show** lineless split-shaded real-world editorial art with **\`remotion-dev/skills\`**, **6 bespoke AE-Bezier smooth transitions**, and **100% local Kokoro-82M** narration.
 
 ---
 
@@ -60,13 +60,13 @@ Engineered for **${config.targetModel}** inside **Google Antigravity IDE**. Guar
 
 Before drafting a single beat, read these core references in this repository:
 1. \`references/infographics-show-ultra-bible.md\` — The 6 Core Pillars, 12 Thematic Color Worlds, and Executive Director Laws.
-2. \`references/pro-editor-micro-craft.md\` — **NEW v5.0**: The 18 Tiny Pro-Editor Details (2-tone cel shading, \`ImpactBurst\`, \`ChapterSliver\`, semantic emerald/gold captions, anticipation curves, and 5-layer SFX cue sheet).
-3. \`references/shot-composition-patterns.md\` — **NEW v5.0**: 8 Signature Camera & Staging Archetypes so every beat looks freshly directed.
-4. \`references/antigravity-imagination-protocol.md\` — **NEW v5.0**: 5-Step Creative Imagination & Self-Critique Loop for unlimited visual inventiveness on ANY topic.
+2. \`references/pro-editor-micro-craft.md\` — **v6.0 Broadcast**: The 18 Tiny Pro-Editor Details (lineless 2-tone split shading, 45° cast shadows, \`LeaderCallout\`, \`SplitBuilding\`, \`ImpactBurst\`, \`ChapterSliver\`, clean broadcast captions, and 5-layer SFX).
+3. \`references/shot-composition-patterns.md\` — **v6.0**: 8 Signature Camera & Staging Archetypes so every beat looks freshly directed.
+4. \`references/antigravity-imagination-protocol.md\` — **v6.0**: 5-Step Creative Imagination & Self-Critique Loop for unlimited visual inventiveness on ANY topic.
 5. \`references/creative-scenario-playbook.md\` — 12-Domain Real-World Visual Metaphor Matrix (zero boxes, zero humans).
 6. \`references/giga-quality-checklist.md\` — The 18-Point Non-Negotiable Pre-Render Quality Gate.
 7. \`references/remotion-best-practices.md\` — Exact 60fps Remotion \`<TransitionSeries>\`, \`spring()\`, and \`evolvePath()\` patterns.
-8. Import ready-made cel-shaded primitives directly from \`src/remotion/proPrimitives.tsx\` and transitions from \`src/remotion/proTransitions.tsx\`!
+8. Import ready-made lineless split-shaded primitives directly from \`src/remotion/proPrimitives.tsx\` and transitions from \`src/remotion/proTransitions.tsx\`!
 
 ---
 
@@ -94,9 +94,9 @@ Whenever the user requests an original video (Mode A), **DO NOT** run scripts or
 
 ## 4. Non-Negotiable Craft & Consistency Laws (Why Every Video Looks Pro-Edited)
 
-- **ZERO BOX TEMPLATES**: Never build UI cards, SaaS widgets, bordered stat boxes, or text walls inside rectangles. Float 1–4 word Montserrat 900 callouts with crisp \`#18222F\` strokes cleanly in open sky negative space.
+- **ZERO BOX TEMPLATES**: Never build UI cards, SaaS widgets, bordered stat boxes, or text walls inside rectangles. Float 1–4 word \`Barlow Condensed\` / \`Montserrat 900\` broadcast callouts cleanly in open sky negative space or attach animated \`LeaderCallout\` elbow pointers to hero landmarks.
 - **ZERO HUMAN FRAMES**: Never draw people, faces, hands, stick figures, or silhouettes. Tell every human action via expressive physical surrogates (steaming teacup, slamming rubber stamp, swinging OPEN sign, ticking wall clock, launching paper airplanes, spinning steel vault door).
-- **UNIFORM INKED VECTOR DEPTH**: Uniform \`#18222F\` charcoal outlines (\`strokeWidth: 3-5\`), hard diagonal cast shadow polygons, rich sky-to-horizon gradients, subtle sunlit key-light shafts, and gentle drifting atmospheric motes.
+- **LINELESS 2-TONE SPLIT-SHADED DEPTH (ZERO CARTOON OUTLINES)**: NEVER wrap scenery or architecture in chunky 4px black coloring-book strokes! Build depth like *The Infographics Show* using adjacent lit/shaded surface planes, crisp 45° diagonal cast shadow polygons, multi-plane architectural skylines (\`SplitBuilding\`), diagonal volumetric key-light shafts, and subtle cinema edge vignettes.
 - **TRUE 60FPS & MICRO-MOTION EVERY 2 SECONDS**: Every scene breathes with organic AE camera drift + living environmental loops (drifting clouds, rising steam, rotating gears, sweeping radar beams, fluttering pages) + elastic spring pop-ins (\`0% -> 106% -> 100%\`).
 - **DEFAULT STYLE PREFERENCES**: Palette polarity mode: Default \`${config.defaultPalette}\` · Kinetic Subtitles: Default \`${config.defaultSubtitles}\`.
 
@@ -148,11 +148,11 @@ python scripts/viral_clipper_pipeline.py --url "<YOUTUBE_URL>" --framing ${confi
 
 ## Why Every Video Generated in Antigravity Hits Pro-Editor Quality
 
-1. **Zero Box Templates · Zero Human Frames**: 100% full-bleed real-world illustrated environments (rooms, streets, bridges, vaults, lighthouses, factories, observatories, oceans) with crisp \`#18222F\` Adobe Illustrator outlines and diagonal cast shadows.
+1. **Zero Box Templates · Zero Human Frames · Zero Cartoon Outlines**: 100% full-bleed lineless 2-tone split-shaded editorial environments (rooms, streets, skylines, bridges, vaults, lighthouses, factories, observatories, oceans) with 45° cast shadows and animated \`LeaderCallout\` pointers.
 2. **12-Domain Creative Imagination Playbook**: Ships concrete visual metaphor blueprints across Finance, Tech/AI, Geopolitics, Career, Science, Space, History, Psychology, and Markets so Antigravity invents unforgettable physical scenarios on ANY topic.
 3. **6 Shipped Pro-Editor Smooth Transitions (\`src/remotion/proTransitions.tsx\`)**: \`proZoomThrough\`, \`proWhipPan\`, \`proIrisReveal\`, \`proDiagonalSweep\`, \`proShutterWipe\`, and \`proLiquidWaveSweep\` driven by After Effects Graph Editor Bezier curves.
-4. **Automated 15-Point Giga Quality Gate (\`scripts/audit_infographics_quality.mjs\`)**: Deterministic pre-render QA script that rejects box cards, human frames, flat layers, dead static shots, or repetitive cuts before a single frame renders.
-5. **100% Local Audio + Stereo Transition SFX**: Synthesizes multi-actor blended **Kokoro-82M** narration + **WhisperX** word timestamps locally, then layers subtle stereo whoosh/chime SFX at every cut boundary.
+4. **Automated 18-Point Giga Quality Gate (\`scripts/audit_infographics_quality.mjs\`)**: Deterministic pre-render QA script that rejects box cards, human frames, flat layers, dead static shots, or repetitive cuts before a single frame renders.
+5. **100% Local Audio + 5-Layer Stereo SFX**: Synthesizes multi-actor blended **Kokoro-82M** narration + **WhisperX** word timestamps locally, then layers subtle stereo whoosh/chime/pop/slam SFX at every cut boundary.
 6. **Built-In Viral YouTube Clipper**: Most Replayed heatmap radar + MediaPipe EMA 9:16 active-speaker smart crop + dead-air trim + \`.ASS\` captions.
 
 ## Quick Setup (Total Local Footprint: ~${budget30m.totalDiskMb} MB)
@@ -172,7 +172,7 @@ pip install kokoro-onnx soundfile whisperx yt-dlp mediapipe opencv-python-headle
 ## Run Your Exported Project Locally
 
 \`\`\`bash
-# Step 1: Audit blueprint against the 15-Point Infographics Show Ultra Quality Gate
+# Step 1: Audit blueprint against the 18-Point Infographics Show Broadcast Quality Gate
 node scripts/audit_infographics_quality.mjs --blueprint templates/active_blueprint.json
 
 # Step 2: Generate local Kokoro-82M voiceover + millisecond WhisperX word sync
@@ -209,11 +209,11 @@ ${VISUAL_METAPHOR_MATRIX.map(
 ${VISUAL_METAPHOR_MATRIX.map((m) => `- **${m.domain}**: ${m.heroProps.map((p) => `\`${p}\``).join(', ')}`).join('\n')}
 `;
 
-  const gigaQualityChecklistMd = `# 18-Point Giga Quality Gate (Pre-Render Excellence Audit · v5.0)
+  const gigaQualityChecklistMd = `# 18-Point Giga Quality Gate (Pre-Render Excellence Audit · v6.0 Broadcast)
 
 Run \`node scripts/audit_infographics_quality.mjs --blueprint project/blueprint.draft.json\` before EVERY render. Every single check below is non-negotiable:
 
-| # | Category | Amateur Defect Eliminated | Infographics Show Ultra v5.0 Standard |
+| # | Category | Amateur Defect Eliminated | Infographics Show Broadcast v6.0 Standard |
 | :--- | :--- | :--- | :--- |
 ${GIGA_QUALITY_CHECKLIST.map(
   (item, idx) =>
@@ -221,27 +221,29 @@ ${GIGA_QUALITY_CHECKLIST.map(
 ).join('\n')}
 `;
 
-  const proEditorMicroCraftMd = `# Pro-Editor Micro-Craft Bible (The Tiny Details That Make Videos Look Edited By A Senior Editor)
+  const proEditorMicroCraftMd = `# Pro-Editor Micro-Craft Bible (v6.0 Lineless Split-Shaded Infographics Show Broadcast)
 
-> Amateur motion graphics stop at basic shapes and slides. Senior editors at *The Infographics Show* separate themselves through 8 obsessive micro-details baked into every single second of footage.
+> Amateur motion graphics rely on chunky black coloring-book strokes, plain flat backgrounds, and bubble-outlined text. Senior editors at *The Infographics Show* achieve crisp editorial polish through 6 lineless split-shaded craft principles baked into every second of footage.
 
-## 1. Two-Tone Cel Shading + Architectural Dressing
-- Never leave flat unshaded walls or naked floating props. Add wainscoting trim, hanging brass pendant lamps, corkboards, wall clocks, wood plank highlights, snow caps on distant peaks, and crisp \`rgba(24,34,47,0.24)\` contact shadows beneath every grounded object.
+## 1. Lineless Two-Tone Split Shading + 45° Cast Shadows (Zero Cartoon Outlines)
+- NEVER wrap buildings, desks, or clouds in 4px black strokes. Define every edge through contrast between a sunlit front facade and a 12–18% darker right/underside shade plane.
+- Ground every hero prop with a soft 45° diagonal cast shadow polygon (\`rgba(10,17,28,0.22)\`) and multi-plane architectural skylines (\`<SplitBuilding />\`).
 
-## 2. Inked Radial \`ImpactBurst\` Accents
-- Whenever a rubber stamp slams, a vault swings open, a banknote fan blooms, or a hero stat lands (\`size >= 52\`), trigger \`<ImpactBurst />\` from \`src/remotion/proPrimitives.tsx\` — 8 crisp tapered radial lines outlined in \`#18222F\` that expand and vanish cleanly over 22 frames.
+## 2. Animated \`LeaderCallout\` Infographic Pointers + 12-Spoke \`ImpactBurst\`
+- Attach \`<LeaderCallout />\` from \`src/remotion/proPrimitives.tsx\` to key landmarks and props: pulsing target dot -> 45° diagonal elbow -> horizontal rule -> crisp uppercase condensed label.
+- On slams, vault reveals, or major milestones, fire a lineless 12-spoke geometric \`<ImpactBurst />\` paired with decaying camera impact shake.
 
-## 3. Brief 2.25s Broadcast \`ChapterSliver\` (Zero Permanent HUD Clutter)
-- NEVER stamp a permanent progress bar or corner timecode over your artwork! Instead, mount \`<ChapterSliver chapter="..." />\` inside each \`<TransitionSeries.Sequence>\`: a sleek top-left editorial ribbon with an animated \`#F5B82E\` lead bar that glides in on frame 6 and exits cleanly by frame 140.
+## 3. Clean Translucent Broadcast \`ChapterSliver\` (Zero Permanent HUD Clutter)
+- NEVER stamp a permanent progress bar or corner timecode over your artwork! Mount \`<ChapterSliver chapter="..." />\`: a sleek translucent dark-navy broadcast ribbon with an animated \`#F5B82E\` lead bar that glides in on frame 6 and exits cleanly by frame 140.
 
-## 4. Semantic Power-Word Outlined Captions (Zero Dark Pill Boxes)
-- NEVER trap subtitles inside a dark TikTok rectangle. Render crisp borderless \`Montserrat 900\` words outlined in \`#141D29\` with hard vertical broadcast shadow and \`14px\` spacing.
+## 4. Clean Broadcast Captions (Zero Dark Pill Boxes · Zero Chunky Cartoon Stroke)
+- NEVER trap subtitles inside a dark rectangle or wrap them in chunky 6px bubble strokes. Render clean \`Barlow Condensed\` / \`Montserrat\` broadcast typography over a feather-soft bottom edge gradient scrim with directional cinema drop-shadow.
 - Highlight standard active spoken words in warm gold \`#FFD166\`, and pop high-signal power words (currency \`$1,500\`, numbers \`90\`, key nouns) in luminous emerald \`#2AD08E\`.
 
 ## 5. AE Anticipation Pull-Back & Optical Rings on Cuts
 - \`proWhipPan\` pulls back \`1.4%\` right before whipping across the frame, accompanied by velocity stretch and crisp edge speed-streaks.
 - \`proZoomThrough\` blooms an expanding dashed optical lens ring right across the cut midpoint.
-- \`proShutterWipe\` renders inked charcoal-and-gold blade edges on BOTH horizontal and vertical cinema shutters.
+- \`proShutterWipe\` renders sharp charcoal-and-gold blade edges on BOTH horizontal and vertical cinema shutters.
 
 ## 6. Five-Layer Pro-Editor Sound Design (\`scripts/render_remotion_60fps.mjs\`)
 1. **Foreground Voiceover**: 100% untouched clarity (\`volume=1.0\`).
@@ -307,7 +309,7 @@ export const SPRING_SMOOTH = { damping: 20, stiffness: 120, mass: 0.9 };
 export const SPRING_SLAM = { damping: 10, stiffness: 360, mass: 0.48 };
 
 /**
- * 1. Crisp 8-spoke After Effects Radial Impact Burst (zero blur, ultra-fast 60fps SVG)
+ * 1. Lineless 12-Spoke Broadcast Radial Impact Burst + Expanding Ring (60fps SVG)
  */
 export const ImpactBurst: React.FC<{
   x: number;
@@ -318,30 +320,28 @@ export const ImpactBurst: React.FC<{
 }> = ({ x, y, triggerFrame, color = '#FFD166', radius = 64 }) => {
   const frame = useCurrentFrame();
   const local = frame - triggerFrame;
-  if (local < 0 || local > 22) return null;
-  const p = interpolate(local, [0, 22], [0, 1], {
+  if (local < 0 || local > 24) return null;
+  const p = interpolate(local, [0, 24], [0, 1], {
     easing: Easing.out(Easing.cubic),
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
   const rInner = radius * (0.28 + p * 0.72);
-  const rOuter = radius * (0.55 + p * 0.85);
-  const strokeW = Math.max(0.5, (1 - p) * 6.5);
-  const op = interpolate(p, [0, 0.25, 1], [0, 1, 0]);
+  const rOuter = radius * (0.55 + p * 0.88);
+  const strokeW = Math.max(0.5, (1 - p) * 5.2);
+  const op = interpolate(p, [0, 0.2, 1], [0, 0.92, 0]);
 
   return (
     <g transform={\`translate(\${x}, \${y})\`} opacity={op}>
-      {[0, 45, 90, 135, 180, 225, 270, 315].map((deg) => {
+      <circle cx={0} cy={0} r={radius * (0.35 + p * 0.9)} fill="none" stroke={color} strokeWidth={Math.max(1, (1 - p) * 3)} opacity={0.5} />
+      {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((deg) => {
         const rad = (deg * Math.PI) / 180;
         const x1 = Math.cos(rad) * rInner;
         const y1 = Math.sin(rad) * rInner;
         const x2 = Math.cos(rad) * rOuter;
         const y2 = Math.sin(rad) * rOuter;
         return (
-          <g key={deg}>
-            <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={OUTLINE_COLOR} strokeWidth={strokeW + 3.5} strokeLinecap="round" />
-            <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={color} strokeWidth={strokeW} strokeLinecap="round" />
-          </g>
+          <line key={deg} x1={x1} y1={y1} x2={x2} y2={y2} stroke={color} strokeWidth={strokeW} strokeLinecap="round" />
         );
       })}
     </g>
@@ -349,7 +349,7 @@ export const ImpactBurst: React.FC<{
 };
 
 /**
- * 2. Brief 2.25s Editorial Chapter Sliver (slides in cleanly on beat start, vanishes by frame 140)
+ * 2. Translucent Broadcast Chapter Sliver (slides in cleanly on beat start, vanishes by frame 140)
  */
 export const ChapterSliver: React.FC<{ chapter: string; accent?: string }> = ({
   chapter,
@@ -367,9 +367,9 @@ export const ChapterSliver: React.FC<{ chapter: string; accent?: string }> = ({
   const tx = (1 - enter) * -280 - exit * 280;
   const op = Math.min(1, enter) * (1 - exit);
   return (
-    <div style={{ position: 'absolute', top: 24, left: 28, transform: \`translate3d(\${tx.toFixed(1)}px, 0, 0)\`, opacity: op, pointerEvents: 'none', display: 'flex', alignItems: 'center', gap: 10 }}>
-      <div style={{ width: 6, height: 24, borderRadius: 2, backgroundColor: accent, border: \`2px solid \${OUTLINE_COLOR}\` }} />
-      <span style={{ fontFamily: FONT_DISPLAY, fontWeight: 900, fontSize: 15, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#FFFFFF', WebkitTextStroke: \`4px \${OUTLINE_COLOR}\`, paintOrder: 'stroke fill', textShadow: \`0 3px 0 \${OUTLINE_COLOR}\` }}>
+    <div style={{ position: 'absolute', top: 24, left: 28, transform: \`translate3d(\${tx.toFixed(1)}px, 0, 0)\`, opacity: op, pointerEvents: 'none', display: 'flex', alignItems: 'center', gap: 10, backgroundColor: 'rgba(11, 18, 30, 0.72)', padding: '6px 14px 6px 8px', borderRadius: 4 }}>
+      <div style={{ width: 4, height: 18, borderRadius: 1, backgroundColor: accent }} />
+      <span style={{ fontFamily: FONT_DISPLAY, fontWeight: 800, fontSize: 15, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#F8FAFC' }}>
         {chapter}
       </span>
     </div>
@@ -377,7 +377,91 @@ export const ChapterSliver: React.FC<{ chapter: string; accent?: string }> = ({
 };
 
 /**
- * 3. Open-Sky Floating Kinetic Callout with automatic ImpactBurst + elastic settle (ZERO BOXES!)
+ * 3. Signature Infographics Show Animated Leader-Line Pointer (Target Dot -> 45deg Elbow -> Label)
+ */
+export const LeaderCallout: React.FC<{
+  targetX: number;
+  targetY: number;
+  elbowX: number;
+  elbowY: number;
+  endX: number;
+  label: string;
+  sublabel?: string;
+  accent?: string;
+  delayFrames?: number;
+}> = ({ targetX, targetY, elbowX, elbowY, endX, label, sublabel, accent = '#F5B82E', delayFrames = 24 }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const pop = spring({ frame: Math.max(0, frame - delayFrames), fps, config: SPRING_SMOOTH });
+  const lineDraw = interpolate(frame, [delayFrames, delayFrames + 18], [0, 1], {
+    easing: Easing.out(Easing.cubic),
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
+  if (pop <= 0.01) return null;
+  const alignRight = endX >= elbowX;
+  const pulse = 1 + Math.sin(frame * 0.14) * 0.2;
+  return (
+    <g opacity={Math.min(1, pop * 1.4)}>
+      <circle cx={targetX} cy={targetY} r={10 * pulse} fill={accent} opacity={0.22} />
+      <circle cx={targetX} cy={targetY} r={4.5} fill={accent} />
+      <path
+        d={\`M \${targetX} \${targetY} L \${elbowX} \${elbowY} L \${endX} \${elbowY}\`}
+        fill="none"
+        stroke={accent}
+        strokeWidth={2.5}
+        strokeDasharray="420"
+        strokeDashoffset={420 * (1 - lineDraw)}
+      />
+      <text x={alignRight ? elbowX + 10 : elbowX - 10} y={elbowY - 10} textAnchor={alignRight ? 'start' : 'end'} fontFamily={FONT_DISPLAY} fontWeight={800} fontSize={22} fill="#FFFFFF" letterSpacing="0.06em">{label}</text>
+      {sublabel && (
+        <text x={alignRight ? elbowX + 10 : elbowX - 10} y={elbowY + 18} textAnchor={alignRight ? 'start' : 'end'} fontFamily={FONT_DISPLAY} fontWeight={700} fontSize={14} fill={accent} letterSpacing="0.08em">{sublabel}</text>
+      )}
+    </g>
+  );
+};
+
+/**
+ * 4. Reusable Lineless Split-Shaded Skyscraper Primitive (Lit Front + Shaded Right 3D Plane)
+ */
+export const SplitBuilding: React.FC<{
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  lit: string;
+  shade: string;
+  windowColor?: string;
+  sideW?: number;
+  spire?: boolean;
+}> = ({ x, y, w, h, lit, shade, windowColor = '#FFE9A3', sideW = 24, spire = false }) => {
+  const cols = Math.max(2, Math.floor((w - 16) / 18));
+  const rows = Math.max(2, Math.floor((h - 24) / 22));
+  return (
+    <g>
+      {spire && <rect x={x + w * 0.48} y={y - 34} width={4} height={36} fill={shade} />}
+      <rect x={x} y={y} width={w} height={h} fill={lit} />
+      <polygon points={\`\${x + w},\${y} \${x + w + sideW},\${y + 10} \${x + w + sideW},\${y + h} \${x + w},\${y + h}\`} fill={shade} />
+      <rect x={x - 3} y={y} width={w + 3} height={6} fill={shade} opacity={0.35} />
+      {Array.from({ length: rows }).map((_, r) =>
+        Array.from({ length: cols }).map((__, c) => (
+          <rect
+            key={\`\${r}-\${c}\`}
+            x={x + 10 + c * 18}
+            y={y + 14 + r * 22}
+            width={10}
+            height={12}
+            fill={windowColor}
+            opacity={(r * 3 + c) % 4 === 0 ? 0.25 : 0.82}
+          />
+        ))
+      )}
+    </g>
+  );
+};
+
+/**
+ * 5. Clean Broadcast Open-Sky Callout (ZERO CARTOON STROKE, ZERO BOXES!)
  */
 export const FloatingCallout: React.FC<{
   x: number;
@@ -392,18 +476,18 @@ export const FloatingCallout: React.FC<{
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const pop = spring({ frame: Math.max(0, frame - delayFrames), fps, config: SPRING_POP });
-  const scale = interpolate(pop, [0, 1], [0.45, 1]);
+  const scale = interpolate(pop, [0, 1], [0.72, 1]);
   const op = interpolate(pop, [0, 0.35], [0, 1], { extrapolateRight: 'clamp' });
-  const liveFloat = Math.sin((frame - delayFrames) * 0.05) * 2.4 * Math.min(1, pop);
+  const liveFloat = Math.sin((frame - delayFrames) * 0.045) * 2.0 * Math.min(1, pop);
 
   return (
     <g>
-      {size >= 52 && <ImpactBurst x={x} y={y - size * 0.25} triggerFrame={delayFrames + 3} color={fill === '#FFFFFF' ? '#FFD166' : fill} radius={size * 1.15} />}
+      {size >= 52 && <ImpactBurst x={x} y={y - size * 0.22} triggerFrame={delayFrames + 3} color={fill === '#FFFFFF' ? '#FFD166' : fill} radius={size * 1.05} />}
       <g transform={\`translate(\${x}, \${(y + liveFloat).toFixed(2)}) scale(\${scale.toFixed(4)})\`} opacity={op}>
-        <text x={3} y={5} textAnchor={align} fontFamily={FONT_DISPLAY} fontWeight={900} fontSize={size} fill="rgba(14,21,32,0.42)">{text}</text>
-        <text x={0} y={0} textAnchor={align} fontFamily={FONT_DISPLAY} fontWeight={900} fontSize={size} fill={fill} stroke={OUTLINE_COLOR} strokeWidth={Math.max(7, Math.round(size * 0.16))} strokeLinejoin="round" paintOrder="stroke fill">{text}</text>
+        <text x={3} y={5} textAnchor={align} fontFamily={FONT_DISPLAY} fontWeight={900} fontSize={size} fill="rgba(7,12,22,0.48)" letterSpacing="0.03em">{text}</text>
+        <text x={0} y={0} textAnchor={align} fontFamily={FONT_DISPLAY} fontWeight={900} fontSize={size} fill={fill} letterSpacing="0.03em">{text}</text>
         {subtext && (
-          <text x={0} y={Math.round(size * 0.56)} textAnchor={align} fontFamily={FONT_DISPLAY} fontWeight={800} fontSize={Math.max(18, Math.round(size * 0.36))} fill="#FFF6DC" stroke={OUTLINE_COLOR} strokeWidth={5} strokeLinejoin="round" paintOrder="stroke fill" letterSpacing="0.06em">{subtext}</text>
+          <text x={0} y={Math.round(size * 0.52)} textAnchor={align} fontFamily={FONT_DISPLAY} fontWeight={700} fontSize={Math.max(16, Math.round(size * 0.32))} fill="#E2ECF8" letterSpacing="0.12em">{subtext}</text>
         )}
       </g>
     </g>
@@ -411,7 +495,7 @@ export const FloatingCallout: React.FC<{
 };
 
 /**
- * 4. Outlined Semantic Power-Word Broadcast Captions (ZERO DARK PILL BOX!)
+ * 6. Clean Broadcast Documentary Captions with Semantic Emerald/Gold Emphasis (ZERO PILL BOX!)
  */
 const POWER_WORD_RE = /^(\\$|৳|\\d|X\\b|USD|BDT|Taka|global|proof|client|retainer|free|myth|hired|day\\b)/i;
 export const KineticSubtitleBar: React.FC<{ narration: string; durationInFrames: number; enabled: boolean }> = ({
@@ -429,8 +513,8 @@ export const KineticSubtitleBar: React.FC<{ narration: string; durationInFrames:
   const visible = words.slice(groupStart, groupStart + 6);
 
   return (
-    <div style={{ position: 'absolute', left: 0, right: 0, bottom: 24, display: 'flex', justifyContent: 'center', pointerEvents: 'none', padding: '0 64px' }}>
-      <div style={{ display: 'inline-flex', alignItems: 'baseline', justifyContent: 'center', gap: 14, flexWrap: 'wrap' }}>
+    <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, padding: '26px 64px 20px', background: 'linear-gradient(180deg, rgba(8,13,22,0) 0%, rgba(8,13,22,0.72) 100%)', display: 'flex', justifyContent: 'center', pointerEvents: 'none' }}>
+      <div style={{ display: 'inline-flex', alignItems: 'baseline', justifyContent: 'center', gap: 12, flexWrap: 'wrap' }}>
         {visible.map((w, idx) => {
           const isCurrent = groupStart + idx === activeWordIdx;
           const isPower = POWER_WORD_RE.test(w.replace(/[^a-zA-Z0-9$৳]/g, ''));
@@ -439,14 +523,12 @@ export const KineticSubtitleBar: React.FC<{ narration: string; durationInFrames:
               key={\`\${groupStart}-\${idx}\`}
               style={{
                 fontFamily: FONT_DISPLAY,
-                fontWeight: 900,
-                fontSize: isCurrent ? 31 : 27,
+                fontWeight: 800,
+                fontSize: isCurrent ? 30 : 27,
                 lineHeight: 1.15,
-                color: isCurrent ? (isPower ? '#2AD08E' : '#FFD166') : '#FFFFFF',
-                WebkitTextStroke: '6px #141D29',
-                paintOrder: 'stroke fill',
-                textShadow: '0 4px 0 #141D29',
-                transform: isCurrent ? 'translateY(-3px) scale(1.06)' : 'none',
+                color: isCurrent ? (isPower ? '#2AD08E' : '#FFD166') : '#F8FAFC',
+                textShadow: '0 2px 10px rgba(4,8,16,0.85), 0 1px 2px rgba(4,8,16,0.95)',
+                transform: isCurrent ? 'translateY(-2px)' : 'none',
               }}
             >
               {w}
@@ -1463,7 +1545,7 @@ console.log(\`[Sovereign Motion Ultra 60fps] Rendered -> \${outFile}\`);
   const skillPackageJson = JSON.stringify(
     {
       name: config.repoName,
-      version: '5.0.0',
+      version: '6.0.0',
       private: true,
       type: 'module',
       scripts: {
@@ -1493,7 +1575,7 @@ console.log(\`[Sovereign Motion Ultra 60fps] Rendered -> \${outFile}\`);
       path: 'SKILL.md',
       category: 'Core',
       language: 'markdown',
-      summary: 'Master Antigravity skill enforcing Gate 1 Review + 15-Point Quality Gate + 60fps Infographics Show Ultra Engine',
+      summary: 'Master Antigravity skill enforcing Gate 1 Review + 18-Point Quality Gate + 60fps Infographics Show Broadcast v6.0 Engine',
       content: skillMd,
     },
     {
@@ -1514,7 +1596,7 @@ console.log(\`[Sovereign Motion Ultra 60fps] Rendered -> \${outFile}\`);
       path: 'references/infographics-show-ultra-bible.md',
       category: 'Reference',
       language: 'markdown',
-      summary: 'Complete Infographics Show Ultra breakdown: 12 real-world color worlds, 6 pro transitions & Executive Director prompt',
+      summary: 'Complete Infographics Show Broadcast breakdown: 12 real-world color worlds, 6 pro transitions & Executive Director prompt',
       content: infographicsUltraBibleMd,
     },
     {
@@ -1528,28 +1610,28 @@ console.log(\`[Sovereign Motion Ultra 60fps] Rendered -> \${outFile}\`);
       path: 'references/pro-editor-micro-craft.md',
       category: 'Reference',
       language: 'markdown',
-      summary: 'NEW v5.0: The tiny pro-editor details — ImpactBurst, ChapterSliver, semantic captions, cel-shading & 5-layer SFX',
+      summary: 'v6.0 Broadcast: Lineless 2-tone split shading, 45° cast shadows, LeaderCallout, SplitBuilding, ImpactBurst & 5-layer SFX',
       content: proEditorMicroCraftMd,
     },
     {
       path: 'references/shot-composition-patterns.md',
       category: 'Reference',
       language: 'markdown',
-      summary: 'NEW v5.0: 8 Signature Camera & Shot-Composition Archetypes so Antigravity varies staging every beat',
+      summary: 'v6.0: 8 Signature Camera & Shot-Composition Archetypes so Antigravity varies staging every beat',
       content: shotCompositionPatternsMd,
     },
     {
       path: 'references/antigravity-imagination-protocol.md',
       category: 'Reference',
       language: 'markdown',
-      summary: 'NEW v5.0: 5-Step Creative Imagination & Self-Critique Protocol for consistent 10/10 scenes on ANY topic',
+      summary: 'v6.0: 5-Step Creative Imagination & Self-Critique Protocol for consistent 10/10 scenes on ANY topic',
       content: antigravityImaginationProtocolMd,
     },
     {
       path: 'references/giga-quality-checklist.md',
       category: 'Reference',
       language: 'markdown',
-      summary: '18-Point Non-Negotiable Pre-Render Quality Gate eliminating box templates, human frames & amateur motion',
+      summary: '18-Point Non-Negotiable Pre-Render Quality Gate eliminating box templates, human frames & cartoon outlines',
       content: gigaQualityChecklistMd,
     },
     {
@@ -1563,7 +1645,7 @@ console.log(\`[Sovereign Motion Ultra 60fps] Rendered -> \${outFile}\`);
       path: 'references/color-worlds-palette.md',
       category: 'Reference',
       language: 'markdown',
-      summary: '12 cinema-graded Infographics Show Ultra real-world color palettes & typography pairing specs',
+      summary: '12 cinema-graded Infographics Show Broadcast real-world color palettes & typography pairing specs',
       content: colorWorldsMd,
     },
     {
@@ -1577,7 +1659,7 @@ console.log(\`[Sovereign Motion Ultra 60fps] Rendered -> \${outFile}\`);
       path: 'references/procedural-svg-scene-graph.md',
       category: 'Reference',
       language: 'markdown',
-      summary: 'Universal 3-plane 2.5D outlined flat-vector composition & AE animation tokens',
+      summary: 'Universal 3-plane 2.5D lineless split-shaded vector composition & AE animation tokens',
       content: proceduralSvgMd,
     },
     {
@@ -1605,14 +1687,14 @@ console.log(\`[Sovereign Motion Ultra 60fps] Rendered -> \${outFile}\`);
       path: 'src/remotion/proPrimitives.tsx',
       category: 'Template',
       language: 'typescript',
-      summary: 'NEW v5.0: Shipped ImpactBurst, ChapterSliver, FloatingCallout & Semantic Power-Word Captions primitives',
+      summary: 'v6.0 Broadcast: Shipped LeaderCallout, SplitBuilding, ImpactBurst, ChapterSliver, FloatingCallout & Broadcast Captions',
       content: shippedProPrimitivesTsx,
     },
     {
       path: 'src/remotion/proTransitions.tsx',
       category: 'Template',
       language: 'typescript',
-      summary: 'Shipped 6 Cinema-Grade AE-Bezier Remotion transitions (v5.0 with anticipation & optical rings)',
+      summary: 'Shipped 6 Cinema-Grade AE-Bezier Remotion transitions (v6.0 with anticipation & optical rings)',
       content: shippedProTransitionsTsx,
     },
     {
